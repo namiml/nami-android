@@ -14,7 +14,7 @@ import com.namiml.entitlement.NamiEntitlementPlatform
 class BasicLinkedApplication : Application() {
 
     companion object {
-        private const val NAMI_APP_ID = "2dc699a5-43c6-4e3a-9166-957e1640741b"
+        private const val NAMI_APP_ID = "eea3721d-a13f-4a94-872a-3c2b795953da"
     }
 
     override fun onCreate() {
