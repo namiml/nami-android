@@ -33,7 +33,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation('com.nami:nami-sdk-android:0.0.1@aar') {
+    implementation('com.nami:nami-sdk-android:0.0.2@aar') {
         transitive true
     }
 }
