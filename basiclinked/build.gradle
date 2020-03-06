@@ -33,10 +33,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation('com.nami:nami-sdk-android:0.0.2@aar') {
-        transitive true
-    }
+    implementation 'com.nami:nami-sdk-android:0.0.3-beta.3'
 }
+
 repositories {
     mavenCentral()
 }
