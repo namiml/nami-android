@@ -13,9 +13,10 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
 import com.namiml.UrlSpanListener
 import com.namiml.api.model.NamiPaywall
-import com.namiml.api.model.Product
-import com.namiml.data.NamiCache
+import com.namiml.api.model.SKU
 import com.namiml.demo.linked.databinding.ActivityPaywallBinding
+import com.namiml.paywall.NamiSKU
+import com.namiml.store.NamiCache
 
 class PaywallActivity : AppCompatActivity() {
 
@@ -28,7 +29,7 @@ class PaywallActivity : AppCompatActivity() {
         fun getIntent(
             context: Context,
             paywallData: NamiPaywall,
-            products: ArrayList<Product>?,
+            products: ArrayList<NamiSKU>?,
             developerPaywallId: String?
         ): Intent {
             return Intent(context, PaywallActivity::class.java).apply {
@@ -69,7 +70,7 @@ class PaywallActivity : AppCompatActivity() {
 
     private fun setupUi(
         namiPaywall: NamiPaywall?,
-        products: List<Product>?,
+        products: List<NamiSKU>?,
         paywallId: String?
     ) {
         namiPaywall?.let {
@@ -102,7 +103,7 @@ class PaywallActivity : AppCompatActivity() {
                             this,
                             R.style.Paywall_Button
                         )
-                    ).apply { text = it.name }
+                    ).apply { text = it.skuName }
                 )
             }
             if (it.signInControl) {
