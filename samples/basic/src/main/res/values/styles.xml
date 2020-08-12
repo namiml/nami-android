@@ -1,0 +1,20 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.Header" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:paddingStart">@dimen/baseline_4x</item>
+        <item name="android:paddingEnd">@dimen/baseline_4x</item>
+    </style>
+
+    <style name="AppTheme.Body" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:paddingStart">@dimen/baseline_4x</item>
+        <item name="android:paddingEnd">@dimen/baseline_4x</item>
+        <item name="android:textColor">@color/textColorSecondary</item>
+    </style>
+
+</resources>

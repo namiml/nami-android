@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="baseline">4dp</dimen>
+    <dimen name="baseline_2x">8dp</dimen>
+    <dimen name="baseline_4x">16dp</dimen>
+    <dimen name="baseline_6x">24dp</dimen>
+</resources>
