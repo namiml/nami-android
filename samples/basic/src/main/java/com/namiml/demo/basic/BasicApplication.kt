@@ -15,13 +15,13 @@ class BasicApplication : Application() {
     internal var allowAutoRaisingPaywall = true
 
     companion object {
-        private const val NAMI_APP_ID = "3d062066-9d3c-430e-935d-855e2c56dd8e"
+        private const val NAMI_APP_PLATFORM_ID = "3d062066-9d3c-430e-935d-855e2c56dd8e"
     }
 
     override fun onCreate() {
         super.onCreate()
         Nami.configure(
-            NamiConfiguration.build(this, NAMI_APP_ID) {
+            NamiConfiguration.build(this, NAMI_APP_PLATFORM_ID) {
                 logLevel = NamiLogLevel.DEBUG.takeIf { BuildConfig.DEBUG } ?: NamiLogLevel.ERROR
                 // developmentMode = true
                 // bypassStore = true

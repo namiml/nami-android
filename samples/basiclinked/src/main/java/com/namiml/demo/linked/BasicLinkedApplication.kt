@@ -19,13 +19,13 @@ class BasicLinkedApplication : Application() {
     internal var allowAutoRaisingPaywall = true
 
     companion object {
-        private const val NAMI_APP_ID = "a95cef52-35e0-4794-8755-577492c2d5d1"
+        private const val NAMI_APP_PLATFORM_ID = "a95cef52-35e0-4794-8755-577492c2d5d1"
     }
 
     override fun onCreate() {
         super.onCreate()
         Nami.configure(
-            NamiConfiguration.build(this, NAMI_APP_ID) {
+            NamiConfiguration.build(this, NAMI_APP_PLATFORM_ID) {
                 logLevel = NamiLogLevel.DEBUG.takeIf { BuildConfig.DEBUG } ?: NamiLogLevel.ERROR
                 developmentMode = IS_DEVELOPMENT_MODE_ON
                 // bypassStore = false
