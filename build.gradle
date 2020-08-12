@@ -15,7 +15,7 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url "https://nami-test.s3.amazonaws.com/"}
+        maven { url "https://nami-android.s3.amazonaws.com/"}
     }
 }
 

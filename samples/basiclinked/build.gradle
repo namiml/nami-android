@@ -18,6 +18,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
     buildFeatures {
         viewBinding true
     }
@@ -33,7 +37,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.namiml:sdk-android:0.2.0-alpha.01'
+    implementation 'com.namiml:sdk-android:0.2.0'
 }
 
 repositories {
