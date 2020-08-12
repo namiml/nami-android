@@ -1,0 +1,19 @@
+# IntelliJ
+.idea
+*.iml
+*.iws
+*.ipr
+classes
+gen-external-apklibs
+
+# Robolectric
+tmp
+
+.DS_Store
+
+# Gradle
+.gradle
+jniLibs
+build
+local.properties
+reports
