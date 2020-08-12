@@ -57,9 +57,6 @@ class PaywallActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPaywallBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.root.doOnLayout {
-            window.insetsController?.hide(WindowInsets.Type.statusBars())
-        }
         intent?.let {
             setupUi(namiPaywall, it.getParcelableArrayListExtra(INTENT_EXTRA_KEY_SKUS))
         }
