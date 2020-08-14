@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">BasicJava</string>
+    <string name="about">About</string>
+    <string name="go_to_about">Go to about</string>
+    <string name="header_introduction">Introduction</string>
+    <string name="body_introduction">This application demonstrates common calls used in a Nami enabled application.</string>
+    <string name="header_instructions">Instructions</string>
+    <string name="body_instruction">If you suspend and resume this app three times in the simulator, an example paywall will be raised - or you can use the <b>Subscribe</b> button below to raise the same paywall.</string>
+    <string name="header_info">Important info</string>
+    <string name="body_info">Any Purchase will be remembered while the application is <b>Active, Suspended, Resume,</b> but cleared when the application is launched.\nExamine the application source code for more details on calls used to respond and monitor purchases.</string>
+    <string name="subscribe">Subscribe</string>
+    <string name="subscription_status_label">Subscription is:</string>
+    <string name="subscription_status_active">Active</string>
+    <string name="subscription_status_inactivate">Inactive</string>
+</resources>
