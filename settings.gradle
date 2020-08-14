@@ -1,2 +1,3 @@
 include ':samples:basiclinked'
 include ':samples:basic'
+include ':samples:basicJava'
