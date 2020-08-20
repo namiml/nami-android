@@ -11,7 +11,7 @@ import com.namiml.NamiLogLevel
 import com.namiml.paywall.NamiPaywallManager
 
 const val TEST_EXTERNAL_IDENTIFIER = "9a9999a9-99aa-99a9-aa99-999a999999a9"
-const val LOG_TAG = "LINKED_DEMO"
+const val LOG_TAG = "DemoLinked"
 const val IS_DEVELOPMENT_MODE_ON = true
 
 class BasicLinkedApplication : Application() {

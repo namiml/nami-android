@@ -1,13 +1,18 @@
 package com.namiml.demo.basic.java;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Consumer;
 
+import com.namiml.customer.CustomerJourneyState;
+import com.namiml.customer.NamiCustomerManager;
 import com.namiml.demo.basic.java.databinding.ActivityMainBinding;
 import com.namiml.entitlement.NamiEntitlement;
 import com.namiml.entitlement.NamiEntitlementManager;
@@ -21,6 +26,8 @@ import kotlin.Unit;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String LOG_TAG = "DemoBasicJava";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +40,19 @@ public class MainActivity extends AppCompatActivity {
         // If at least one entitlement is enabled, make this an active subscription
         NamiEntitlementManager.registerEntitlementChangeListener(namiEntitlements ->
                 handleEntitlementChangeListener(namiEntitlements, binding));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CustomerJourneyState customerJourneyState = NamiCustomerManager.currentCustomerJourneyState();
+        if (customerJourneyState != null) {
+            Log.d(LOG_TAG, "currentCustomerJourneyState");
+            Log.d(LOG_TAG, "formerSubscriber ==> " + customerJourneyState.getFormerSubscriber());
+            Log.d(LOG_TAG, "inGracePeriod ==> " + customerJourneyState.getInGracePeriod());
+            Log.d(LOG_TAG, "inIntroOfferPeriod ==> " + customerJourneyState.getInIntroOfferPeriod());
+            Log.d(LOG_TAG, "inTrialPeriod ==> " + customerJourneyState.getInTrialPeriod());
+        }
     }
 
     private Unit handleEntitlementChangeListener(List<NamiEntitlement> namiEntitlements,
@@ -72,5 +92,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void onAboutClicked(Activity activity) {
         startActivity(AboutActivity.getIntent(activity));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (NamiPaywallManager.didUserCloseBlockingNamiPaywall(requestCode, resultCode)) {
+            Toast.makeText(this, "User closed the paywall", Toast.LENGTH_SHORT).show();
+        }
     }
 }
