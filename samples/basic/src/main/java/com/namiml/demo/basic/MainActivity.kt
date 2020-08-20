@@ -1,12 +1,18 @@
 package com.namiml.demo.basic
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.namiml.customer.NamiCustomerManager
 import com.namiml.demo.basic.databinding.ActivityMainBinding
 import com.namiml.entitlement.NamiEntitlementManager
 import com.namiml.ml.NamiMLManager
 import com.namiml.paywall.NamiPaywallManager
+
+const val LOG_TAG = "DemoBasic"
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,6 +46,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        NamiCustomerManager.currentCustomerJourneyState()?.let {
+            Log.d(LOG_TAG, "currentCustomerJourneyState")
+            Log.d(LOG_TAG, "formerSubscriber ==> ${it.formerSubscriber}")
+            Log.d(LOG_TAG, "inGracePeriod ==> ${it.inGracePeriod}")
+            Log.d(LOG_TAG, "inIntroOfferPeriod ==> ${it.inIntroOfferPeriod}")
+            Log.d(LOG_TAG, "inTrialPeriod ==> ${it.inTrialPeriod}")
+        }
+    }
+
     private fun View.onThrottledClick(invokeWhenClicked: () -> Unit) {
         setOnClickListener {
             this.isClickable = false
@@ -47,6 +64,13 @@ class MainActivity : AppCompatActivity() {
                 this.isClickable = true
             }, 500)
             invokeWhenClicked()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (NamiPaywallManager.didUserCloseBlockingNamiPaywall(requestCode, resultCode)) {
+            Toast.makeText(this, "User closed the paywall", Toast.LENGTH_SHORT).show();
         }
     }
 }
