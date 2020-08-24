@@ -6,7 +6,9 @@ Built for the subscription and in-app purchase era, Nami is an end-to-end soluti
 This repository contains demo apps to help you get started with using the Nami ML platform.
 
 More information available in our documentation at:
+
 [https://docs.namiml.com/](https://docs.namiml.com)
 
 The changelog for the SDK releases can be found here:
+
 [https://github.com/namiml/nami-android/wiki/Nami-SDK-Releases](https://github.com/namiml/nami-android/wiki/Nami-SDK-Releases)
