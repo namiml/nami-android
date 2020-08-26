@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Consumer;
@@ -27,24 +28,48 @@ import kotlin.Unit;
 public class MainActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "DemoBasicJava";
+    ActivityMainBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
         setOnThrottledClick(binding.aboutButton, this::onAboutClicked);
         setOnThrottledClick(binding.subscriptionButton, this::onSubscriptionClicked);
-
-        // If at least one entitlement is enabled, make this an active subscription
-        NamiEntitlementManager.registerEntitlementChangeListener(namiEntitlements ->
-                handleEntitlementChangeListener(namiEntitlements, binding));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        // This is to check for active entitlements on app resume to take any action if you want
+        handleActiveEntitlements(NamiEntitlementManager.activeEntitlements());
+
+        // This is to register entitlement change listener during lifecycle of this activity
+        NamiEntitlementManager.registerEntitlementChangeListener(activeEntitlements -> {
+            Log.d(LOG_TAG, "Entitlements Change Listener triggered");
+            logActiveEntitlements(activeEntitlements);
+            return handleActiveEntitlements(activeEntitlements);
+        });
+
+        logCustomerJourneyState();
+    }
+
+    private void logActiveEntitlements(@NonNull List<NamiEntitlement> activeEntitlements) {
+        if (activeEntitlements.isEmpty()) {
+            Log.d(LOG_TAG, "No active entitlements");
+        } else {
+            Log.d(LOG_TAG, "Active entitlements");
+            for (NamiEntitlement activeEntitlement : activeEntitlements) {
+                Log.d(LOG_TAG, "\tName: " + activeEntitlement.getName());
+                Log.d(LOG_TAG, "\tReferenceId: " + activeEntitlement.getReferenceId());
+            }
+        }
+    }
+
+    private void logCustomerJourneyState() {
         CustomerJourneyState customerJourneyState = NamiCustomerManager.currentCustomerJourneyState();
         if (customerJourneyState != null) {
             Log.d(LOG_TAG, "currentCustomerJourneyState");
@@ -55,23 +80,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private Unit handleEntitlementChangeListener(List<NamiEntitlement> namiEntitlements,
-                                                 ActivityMainBinding binding) {
-        if (!namiEntitlements.isEmpty()) {
-            boolean atLeastOneActive = false;
-            for (NamiEntitlement namiEntitlement : namiEntitlements) {
-                if (namiEntitlement.isActive()) {
-                    atLeastOneActive = true;
-                    break;
-                }
-            }
-            binding.subscriptionStatus.setEnabled(atLeastOneActive);
-            if (atLeastOneActive) {
-                binding.subscriptionStatus.setText(R.string.subscription_status_active);
-            } else {
-                binding.subscriptionStatus.setText(R.string.subscription_status_inactivate);
-            }
+    // If at least one entitlement is active, then show text on UI as active
+    private Unit handleActiveEntitlements(List<NamiEntitlement> activeEntitlements) {
+        int textResId = R.string.subscription_status_inactivate;
+        boolean showAsActive = false;
+        if (!activeEntitlements.isEmpty()) {
+            showAsActive = true;
+            textResId = R.string.subscription_status_active;
         }
+        binding.subscriptionStatus.setEnabled(showAsActive);
+        binding.subscriptionStatus.setText(textResId);
         return Unit.INSTANCE;
     }
 

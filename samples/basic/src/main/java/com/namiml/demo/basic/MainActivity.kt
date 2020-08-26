@@ -31,23 +31,21 @@ class MainActivity : AppCompatActivity() {
                 NamiPaywallManager.raisePaywall(this)
             }
         }
-
-        // If at least one entitlement is enabled, make this an active subscription
-        NamiEntitlementManager.registerEntitlementChangeListener { entitlements ->
-            entitlements.any { it.isActive() }.let { isActive ->
-                binding.subscriptionStatus.apply {
-                    text = getText(
-                        R.string.subscription_status_active.takeIf { isActive }
-                            ?: R.string.subscription_status_inactivate
-                    )
-                    isEnabled = isActive
-                }
-            }
-        }
     }
 
     override fun onResume() {
         super.onResume()
+
+        // If at least one entitlement is enabled, make this an active subscription
+        val isActive = NamiEntitlementManager.activeEntitlements().isNotEmpty()
+        binding.subscriptionStatus.apply {
+            text = getText(
+                R.string.subscription_status_active.takeIf { isActive }
+                    ?: R.string.subscription_status_inactivate
+            )
+            isEnabled = isActive
+        }
+
         NamiCustomerManager.currentCustomerJourneyState()?.let {
             Log.d(LOG_TAG, "currentCustomerJourneyState")
             Log.d(LOG_TAG, "formerSubscriber ==> ${it.formerSubscriber}")
@@ -70,7 +68,7 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (NamiPaywallManager.didUserCloseBlockingNamiPaywall(requestCode, resultCode)) {
-            Toast.makeText(this, "User closed the paywall", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "User closed the paywall", Toast.LENGTH_SHORT).show()
         }
     }
 }
