@@ -37,17 +37,37 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        NamiEntitlementManager.registerEntitlementChangeListener { entitlements ->
-            evaluateEntitlements(entitlements)
+        // This is to register entitlement change listener during lifecycle of this activity
+        NamiEntitlementManager.registerEntitlementChangeListener { activeEntitlements ->
+            Log.d(LOG_TAG, "Entitlements Change Listener triggered")
+            logActiveEntitlements(activeEntitlements)
+            handleActiveEntitlements(activeEntitlements)
         }
 
+        // This is to register purchase change listener during lifecycle of this activity
         NamiPurchaseManager.registerPurchasesChangedHandler { purchases, state, error ->
             evaluateLastPurchaseEvent(purchases, state, error)
         }
 
-        // If at least one entitlement is enabled, make this an active subscription
-        evaluateEntitlements(NamiEntitlementManager.getEntitlements())
+        // This is to check for active entitlements on app resume to take any action if you want
+        handleActiveEntitlements(NamiEntitlementManager.activeEntitlements())
 
+        logCustomerJourneyState()
+    }
+
+    private fun logActiveEntitlements(activeEntitlements: List<NamiEntitlement>) {
+        if (activeEntitlements.isNotEmpty()) {
+            Log.d(LOG_TAG, "Active entitlements")
+            for (ent in activeEntitlements) {
+                Log.d(LOG_TAG, "\tName: " + ent.name)
+                Log.d(LOG_TAG, "\tReferenceId: " + ent.referenceId)
+            }
+        } else {
+            Log.d(LOG_TAG, "No active entitlements")
+        }
+    }
+
+    private fun logCustomerJourneyState() {
         NamiCustomerManager.currentCustomerJourneyState()?.let {
             Log.d(LOG_TAG, "currentCustomerJourneyState")
             Log.d(LOG_TAG, "formerSubscriber ==> ${it.formerSubscriber}")
@@ -63,15 +83,17 @@ class MainActivity : AppCompatActivity() {
         NamiPurchaseManager.registerPurchasesChangedHandler(null)
     }
 
-    private fun evaluateEntitlements(entitlements: List<NamiEntitlement>) {
-        entitlements.any { it.isActive() }.let { isActive ->
-            binding.subscriptionStatus.apply {
-                text = getText(
-                    R.string.subscription_status_active.takeIf { isActive }
-                        ?: R.string.subscription_status_inactivate
-                )
-                isEnabled = isActive
-            }
+    // If at least one entitlement is active, then show text on UI as active
+    private fun handleActiveEntitlements(activeEntitlements: List<NamiEntitlement>) {
+        var isActive = false
+        var textResId = R.string.subscription_status_inactivate
+        if (activeEntitlements.isNotEmpty()) {
+            isActive = true
+            textResId = R.string.subscription_status_active
+        }
+        binding.subscriptionStatus.apply {
+            text = getText(textResId)
+            isEnabled = isActive
         }
     }
 
@@ -80,43 +102,15 @@ class MainActivity : AppCompatActivity() {
         namiPurchaseState: NamiPurchaseState,
         errorMsg: String?
     ) {
-        when (namiPurchaseState) {
-            NamiPurchaseState.PURCHASED -> {
-                Log.d(LOG_TAG, "Enable access to entitlement now")
-
-                val activeEntitlements = NamiEntitlementManager.activeEntitlements()
-                Log.d(LOG_TAG, "Active Entitlements: ")
-                for (ent in activeEntitlements) {
-                    Log.d(LOG_TAG, "\tName: " + ent.name)
-                    Log.d(LOG_TAG, "\tReferenceId: " + ent.referenceId)
-                }
-
-                Log.d(LOG_TAG, "\nActive Purchases: ")
-                for (pur in activePurchases) {
-                    Log.d(LOG_TAG, "\tSkuId: ${pur.skuId}")
-                }
+        Log.d(LOG_TAG, "Purchase State ${namiPurchaseState.name}")
+        if (namiPurchaseState == NamiPurchaseState.PURCHASED) {
+            Log.d(LOG_TAG, "\nActive Purchases: ")
+            for (pur in activePurchases) {
+                Log.d(LOG_TAG, "\tSkuId: ${pur.skuId}")
             }
-            NamiPurchaseState.CANCELLED -> {
-                Log.d(
-                    LOG_TAG,
-                    "User decided to not proceed with purchase. " +
-                            "Do not enable access to entitlement"
-                )
-                Log.d(LOG_TAG, "Reason : ${errorMsg ?: "Unknown"}")
-            }
-            NamiPurchaseState.UNKNOWN -> {
-                printNoAction()
-            }
-            else -> {
-                printNoAction()
-            }
+        } else {
+            Log.d(LOG_TAG, "Reason : ${errorMsg ?: "Unknown"}")
         }
-    }
-
-    private fun printNoAction() {
-        val msg = "Purchase Event was dispatched but there is no corresponding action " +
-                "to take at this time"
-        Log.d(LOG_TAG, msg)
     }
 
     private fun View.onThrottledClick(invokeWhenClicked: () -> Unit) {

@@ -3,14 +3,14 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion compile_sdk
 
     defaultConfig {
         applicationId "com.namiml.demo.basic"
-        minSdkVersion 21
-        targetSdkVersion 30
-        versionCode 1
-        versionName "1.0.0"
+        minSdkVersion min_sdk
+        targetSdkVersion target_sdk
+        versionCode version_code
+        versionName nami_sdk_version
     }
 
     compileOptions {
@@ -37,7 +37,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.namiml:sdk-android:0.3.1'
+    implementation "com.namiml:sdk-android:$nami_sdk_version"
 }
 
 repositories {
