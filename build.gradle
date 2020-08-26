@@ -18,7 +18,6 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenLocal()
         google()
         jcenter()
         maven { url "https://nami-android.s3.amazonaws.com/"}
