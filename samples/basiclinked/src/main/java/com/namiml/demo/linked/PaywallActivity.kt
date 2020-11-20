@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.util.Log
@@ -12,16 +13,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.textview.MaterialTextView
 import com.namiml.Nami
 import com.namiml.NamiExternalIdentifierType
 import com.namiml.billing.NamiPurchaseCompleteResult
 import com.namiml.billing.NamiPurchaseManager
 import com.namiml.demo.linked.databinding.ActivityPaywallBinding
+import com.namiml.demo.linked.databinding.ViewSkuButtonGroupBinding
 import com.namiml.paywall.NamiPaywall
 import com.namiml.paywall.NamiSKU
-import com.namiml.paywall.SubscriptionPeriod
 
 class PaywallActivity : AppCompatActivity() {
 
@@ -31,20 +30,18 @@ class PaywallActivity : AppCompatActivity() {
         // a ViewModel which acts like a container. This reference would be nullified when
         // activity is destroyed. It's just easy and fastest way of achieving this for demo purposes
         private var namiPaywall: NamiPaywall? = null
-        private const val INTENT_EXTRA_KEY_SKUS = "intent_extra_key_skus"
-        private const val INTENT_EXTRA_KEY_ID = "intent_extra_key_id"
+        private var skus: List<NamiSKU>? = null
+        private const val PLAY_STORE_SUBSCRIPTION_URL =
+            "https://play.google.com/store/account/subscriptions"
 
         fun getIntent(
             context: Context,
             namiPaywall: NamiPaywall,
-            skus: ArrayList<NamiSKU>?,
-            developerPaywallId: String?
+            skus: List<NamiSKU>?
         ): Intent {
             this.namiPaywall = namiPaywall
-            return Intent(context, PaywallActivity::class.java).apply {
-                putParcelableArrayListExtra(INTENT_EXTRA_KEY_SKUS, skus)
-                putExtra(INTENT_EXTRA_KEY_ID, developerPaywallId)
-            }
+            this.skus = skus
+            return Intent(context, PaywallActivity::class.java)
         }
     }
 
@@ -55,15 +52,14 @@ class PaywallActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPaywallBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        intent?.let {
-            setupUi(namiPaywall, it.getParcelableArrayListExtra(INTENT_EXTRA_KEY_SKUS))
-        }
+        setupUi(namiPaywall, skus)
         overridePendingTransition(R.anim.slide_up, R.anim.stay_still)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         namiPaywall = null
+        skus = null
     }
 
     override fun finish() {
@@ -82,8 +78,11 @@ class PaywallActivity : AppCompatActivity() {
         setupPaywallBackground(namiPaywallLocal)
         setupCloseButton(namiPaywallLocal)
         setupHeaderBody(namiPaywallLocal)
-        buildCallToActionButtons(skus, binding.linkedPaywallProductParent)
-        setupSignInAndRestoreButtons(namiPaywallLocal)
+        skus?.let {
+            buildCallToActionButtons(skus, binding.linkedPaywallProductParent)
+        }
+        setupSignInButton(namiPaywallLocal)
+        setupRestoreButton(namiPaywallLocal)
         namiPaywallLocal.purchaseTerms?.let {
             binding.linkedPaywallPurchaseTerms.apply {
                 visibility = View.VISIBLE
@@ -111,7 +110,7 @@ class PaywallActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupSignInAndRestoreButtons(namiPaywall: NamiPaywall) {
+    private fun setupSignInButton(namiPaywall: NamiPaywall) {
         if (namiPaywall.signInControl) {
             binding.linkedPaywallSignInButton.apply {
                 setOnClickListener {
@@ -128,8 +127,19 @@ class PaywallActivity : AppCompatActivity() {
                 visibility = View.VISIBLE
             }
         }
+    }
+
+    private fun setupRestoreButton(namiPaywall: NamiPaywall) {
         if (namiPaywall.restoreControl) {
-            binding.linkedPaywallRestoreButton.visibility = View.VISIBLE
+            binding.linkedPaywallRestoreButton.apply {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                        data = Uri.parse(PLAY_STORE_SUBSCRIPTION_URL)
+                    }
+                    startActivity(intent)
+                }
+            }
         }
     }
 
@@ -156,39 +166,15 @@ class PaywallActivity : AppCompatActivity() {
     }
 
     /**
-     * Sort NamiSKUs by subscription duration.
-     */
-    private fun sortNamiSKUs(skus: List<NamiSKU>?): List<NamiSKU>? {
-        return skus?.sortedBy {
-            it.subscriptionPeriod?.duration
-        }
-    }
-
-    /**
      * @return Return formatted button label
      */
     private fun getLabel(namiSKU: NamiSKU): String {
-        namiSKU.localizedPrice.also { price ->
-            return namiSKU.subscriptionPeriod?.let { subscriptionPeriod ->
-                "$price / ${subscriptionPeriod.getDurationLabel()}"
-            } ?: run {
-                if (IS_DEVELOPMENT_MODE_ON) {
-                    getString(R.string.sku_error_title)
-                } else {
-                    "${namiSKU.skuName} - $price"
-                }
+        return namiSKU.generateButtonLabelForPaywall(this) ?: run {
+            if (IS_DEVELOPMENT_MODE_ON) {
+                getString(R.string.sku_error_title)
+            } else {
+                "${namiSKU.skuDetails.title}} - ${namiSKU.skuDetails.price}"
             }
-        }
-    }
-
-    private fun SubscriptionPeriod.getDurationLabel(): String {
-        return when (this) {
-            SubscriptionPeriod.WEEKLY -> "Weekly"
-            SubscriptionPeriod.MONTHLY -> "Monthly"
-            SubscriptionPeriod.QUARTERLY -> "Quarterly"
-            SubscriptionPeriod.HALF_YEAR -> "Six Months"
-            SubscriptionPeriod.ANNUAL -> "Yearly"
-            else -> "Error"
         }
     }
 
@@ -198,46 +184,42 @@ class PaywallActivity : AppCompatActivity() {
         subtitle: CharSequence? = null,
         listener: View.OnClickListener? = null
     ): View {
-        return layoutInflater.inflate(R.layout.view_sku_button_group, null).also {
-            with(it.findViewById<MaterialButton>(R.id.sku_button)) {
+        ViewSkuButtonGroupBinding.inflate(layoutInflater, null, false).also { binding ->
+            binding.skuButton.apply {
                 text = buttonText
                 listener?.let { buttonListener ->
                     setOnClickListener(buttonListener)
                 }
             }
-            with(it.findViewById<MaterialTextView>(R.id.sku_button_subtitle)) {
+            binding.skuButtonSubtitle.apply {
                 visibility = View.VISIBLE
                 text = subtitle
             }
+            return binding.root
         }
     }
 
     /**
-     * Return null if namiSKU is well-formed and value. Other return the skuID of the
-     * app config entitlement for debugging purposes
+     * Return null if namiSKU is well-formed value. Other return the skuID for debugging purposes
      */
     private fun getSubTitle(namiSKU: NamiSKU): CharSequence? {
-        val skuDetails = NamiPurchaseManager.getSkuDetails(namiSKU.skuId)
-        return if (skuDetails == null && IS_DEVELOPMENT_MODE_ON) {
+        return if (IS_DEVELOPMENT_MODE_ON) {
             getString(R.string.sku_error_sku_ref, namiSKU.skuId)
         } else {
             null
         }
     }
 
-    private fun buildCallToActionButtons(skus: List<NamiSKU>?, container: ViewGroup) {
-        sortNamiSKUs(skus)?.let {
-            for (namiSKU in it) {
-                getLabel(namiSKU).also { label ->
-                    val button = getSKUButton(
-                        buttonText = label,
-                        subtitle = getSubTitle(namiSKU),
-                        listener = View.OnClickListener {
-                            NamiPurchaseManager.buySKU(this, namiSKU.skuId, onPurchaseComplete)
-                        }
-                    )
-                    container.addView(button)
+    private fun buildCallToActionButtons(skus: List<NamiSKU>, container: ViewGroup) {
+        for (namiSKU in skus) {
+            getSKUButton(
+                buttonText = getLabel(namiSKU),
+                subtitle = getSubTitle(namiSKU),
+                listener = {
+                    NamiPurchaseManager.buySKU(this, namiSKU.skuId, onPurchaseComplete)
                 }
+            ).also { button ->
+                container.addView(button)
             }
         }
     }

@@ -12,7 +12,7 @@ class AboutActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAboutBinding
 
     companion object {
-        private val CORE_CONTENT_LABELS = listOf("About")
+        private const val CORE_CONTENT_LABEL = "About"
         fun getIntent(context: Context): Intent {
             return Intent(context, AboutActivity::class.java)
         }
@@ -34,12 +34,12 @@ class AboutActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         (application as BasicApplication).allowAutoRaisingPaywall = false
-        NamiMLManager.enterCoreContent(CORE_CONTENT_LABELS)
+        NamiMLManager.enterCoreContent(CORE_CONTENT_LABEL)
     }
 
     override fun onPause() {
         super.onPause()
         (application as BasicApplication).allowAutoRaisingPaywall = true
-        NamiMLManager.exitCoreContent(CORE_CONTENT_LABELS)
+        NamiMLManager.exitCoreContent(CORE_CONTENT_LABEL)
     }
 }

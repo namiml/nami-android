@@ -32,7 +32,7 @@ class BasicLinkedApplication : Application() {
             }
         )
 
-        NamiPaywallManager.registerApplicationSignInProvider { cxt, paywall, developerPaywallId ->
+        NamiPaywallManager.registerSignInListener { cxt, paywall, developerPaywallId ->
             Toast.makeText(cxt, "Sign in clicked", Toast.LENGTH_SHORT).show()
             // Once user signs in, you may provide unique identifier that can be used to link
             // different devices to the same customer in the Nami platform.
@@ -41,22 +41,18 @@ class BasicLinkedApplication : Application() {
             Nami.setExternalIdentifier(TEST_EXTERNAL_IDENTIFIER, NamiExternalIdentifierType.UUID)
         }
 
-        NamiPaywallManager.registerApplicationPaywallProvider { _, namiPaywall, skus, paywallId ->
+        NamiPaywallManager.registerPaywallRaiseListener { _, namiPaywall, skus, paywallId ->
             namiPaywall.extraData?.let { extraDataFromPaywall ->
                 for (entry in extraDataFromPaywall.entries) {
                     Log.d(LOG_TAG, "${entry.key} --> ${entry.value}")
                 }
             }
-            startActivity(
-                PaywallActivity.getIntent(
-                    this,
-                    namiPaywall,
-                    ArrayList(skus.orEmpty()),
-                    paywallId
-                ).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-            )
+            Log.d(LOG_TAG, "styleData ==> ${namiPaywall.styleData}")
+            PaywallActivity.getIntent(this, namiPaywall, skus).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }.also { intent ->
+                startActivity(intent)
+            }
         }
 
         NamiPaywallManager.registerApplicationAutoRaisePaywallBlocker {

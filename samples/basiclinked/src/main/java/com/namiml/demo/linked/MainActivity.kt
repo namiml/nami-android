@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(AboutActivity.getIntent(this))
         }
         binding.subscriptionButton.onThrottledClick {
-            NamiMLManager.coreAction(listOf("subscribe"))
+            NamiMLManager.coreAction("subscribe")
             if (NamiPaywallManager.canRaisePaywall()) {
                 NamiPaywallManager.raisePaywall(this)
             }
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // This is to register purchase change listener during lifecycle of this activity
-        NamiPurchaseManager.registerPurchasesChangedHandler { purchases, state, error ->
+        NamiPurchaseManager.registerPurchasesChangedListener { purchases, state, error ->
             evaluateLastPurchaseEvent(purchases, state, error)
         }
 
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         NamiEntitlementManager.registerEntitlementChangeListener(null)
-        NamiPurchaseManager.registerPurchasesChangedHandler(null)
+        NamiPurchaseManager.registerPurchasesChangedListener(null)
     }
 
     // If at least one entitlement is active, then show text on UI as active

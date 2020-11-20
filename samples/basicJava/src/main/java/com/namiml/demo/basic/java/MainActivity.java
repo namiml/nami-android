@@ -12,6 +12,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Consumer;
 
+import com.namiml.billing.NamiPurchase;
+import com.namiml.billing.NamiPurchaseManager;
+import com.namiml.billing.NamiPurchaseState;
 import com.namiml.customer.CustomerJourneyState;
 import com.namiml.customer.NamiCustomerManager;
 import com.namiml.demo.basic.java.databinding.ActivityMainBinding;
@@ -20,7 +23,6 @@ import com.namiml.entitlement.NamiEntitlementManager;
 import com.namiml.ml.NamiMLManager;
 import com.namiml.paywall.NamiPaywallManager;
 
-import java.util.Collections;
 import java.util.List;
 
 import kotlin.Unit;
@@ -44,15 +46,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // This is to check for active entitlements on app resume to take any action if you want
-        handleActiveEntitlements(NamiEntitlementManager.activeEntitlements());
-
         // This is to register entitlement change listener during lifecycle of this activity
         NamiEntitlementManager.registerEntitlementChangeListener(activeEntitlements -> {
             Log.d(LOG_TAG, "Entitlements Change Listener triggered");
             logActiveEntitlements(activeEntitlements);
-            return handleActiveEntitlements(activeEntitlements);
+            handleActiveEntitlements(activeEntitlements);
+            return Unit.INSTANCE;
         });
+
+        NamiPurchaseManager.registerPurchasesChangedListener((namiPurchases, namiPurchaseState, error) -> {
+            evaluateLastPurchaseEvent(namiPurchases, namiPurchaseState, error);
+            return Unit.INSTANCE;
+        });
+
+        // This is to check for active entitlements on app resume to take any action if you want
+        handleActiveEntitlements(NamiEntitlementManager.activeEntitlements());
 
         logCustomerJourneyState();
     }
@@ -81,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // If at least one entitlement is active, then show text on UI as active
-    private Unit handleActiveEntitlements(List<NamiEntitlement> activeEntitlements) {
+    private void handleActiveEntitlements(List<NamiEntitlement> activeEntitlements) {
         int textResId = R.string.subscription_status_inactivate;
         boolean showAsActive = false;
         if (!activeEntitlements.isEmpty()) {
@@ -90,13 +98,28 @@ public class MainActivity extends AppCompatActivity {
         }
         binding.subscriptionStatus.setEnabled(showAsActive);
         binding.subscriptionStatus.setText(textResId);
-        return Unit.INSTANCE;
     }
 
     private void onSubscriptionClicked(Activity activity) {
-        NamiMLManager.coreAction(Collections.singletonList("subscribe"));
+        NamiMLManager.coreAction("subscribe");
         if (NamiPaywallManager.canRaisePaywall()) {
             NamiPaywallManager.raisePaywall(activity);
+        }
+    }
+
+    private void evaluateLastPurchaseEvent(
+            @NonNull List<NamiPurchase> activePurchases,
+            @NonNull NamiPurchaseState namiPurchaseState,
+            @Nullable String errorMsg
+    ) {
+        Log.d(LOG_TAG, "Purchase State " + namiPurchaseState.name());
+        if (namiPurchaseState == NamiPurchaseState.PURCHASED) {
+            Log.d(LOG_TAG, "\nActive Purchases: ");
+            for (NamiPurchase purchase : activePurchases) {
+                Log.d(LOG_TAG, "\tSkuId: " + purchase.getSkuId());
+            }
+        } else {
+            Log.d(LOG_TAG, "Reason : " + errorMsg);
         }
     }
 
