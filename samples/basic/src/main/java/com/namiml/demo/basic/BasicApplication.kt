@@ -28,7 +28,7 @@ class BasicApplication : Application() {
             }
         )
 
-        NamiPaywallManager.registerApplicationSignInProvider { context, paywallData, paywallId ->
+        NamiPaywallManager.registerSignInListener { context, paywallData, paywallId ->
             Toast.makeText(context, "Sign in clicked", Toast.LENGTH_SHORT).show()
             // Once user signs in, you may provide unique identifier that can be used to link
             // different devices to the same customer in the Nami platform.

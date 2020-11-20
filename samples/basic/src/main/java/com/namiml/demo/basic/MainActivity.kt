@@ -6,8 +6,12 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.namiml.billing.NamiPurchase
+import com.namiml.billing.NamiPurchaseManager
+import com.namiml.billing.NamiPurchaseState
 import com.namiml.customer.NamiCustomerManager
 import com.namiml.demo.basic.databinding.ActivityMainBinding
+import com.namiml.entitlement.NamiEntitlement
 import com.namiml.entitlement.NamiEntitlementManager
 import com.namiml.ml.NamiMLManager
 import com.namiml.paywall.NamiPaywallManager
@@ -36,22 +40,73 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        // If at least one entitlement is enabled, make this an active subscription
-        val isActive = NamiEntitlementManager.activeEntitlements().isNotEmpty()
-        binding.subscriptionStatus.apply {
-            text = getText(
-                R.string.subscription_status_active.takeIf { isActive }
-                    ?: R.string.subscription_status_inactivate
-            )
-            isEnabled = isActive
+        // This is to register entitlement change listener during lifecycle of this activity
+        NamiEntitlementManager.registerEntitlementChangeListener { activeEntitlements ->
+            Log.d(LOG_TAG, "Entitlements Change Listener triggered")
+            logActiveEntitlements(activeEntitlements)
+            handleActiveEntitlements(activeEntitlements)
         }
 
+        // This is to register purchase change listener during lifecycle of this activity
+        NamiPurchaseManager.registerPurchasesChangedListener { purchases, state, error ->
+            evaluateLastPurchaseEvent(purchases, state, error)
+        }
+
+        // This is to check for active entitlements on app resume to take any action if you want
+        handleActiveEntitlements(NamiEntitlementManager.activeEntitlements())
+
+        logCustomerJourneyState()
+    }
+
+    private fun logActiveEntitlements(activeEntitlements: List<NamiEntitlement>) {
+        if (activeEntitlements.isNotEmpty()) {
+            Log.d(LOG_TAG, "Active entitlements")
+            for (ent in activeEntitlements) {
+                Log.d(LOG_TAG, "\tName: " + ent.name)
+                Log.d(LOG_TAG, "\tReferenceId: " + ent.referenceId)
+            }
+        } else {
+            Log.d(LOG_TAG, "No active entitlements")
+        }
+    }
+
+    private fun logCustomerJourneyState() {
         NamiCustomerManager.currentCustomerJourneyState()?.let {
             Log.d(LOG_TAG, "currentCustomerJourneyState")
             Log.d(LOG_TAG, "formerSubscriber ==> ${it.formerSubscriber}")
             Log.d(LOG_TAG, "inGracePeriod ==> ${it.inGracePeriod}")
             Log.d(LOG_TAG, "inIntroOfferPeriod ==> ${it.inIntroOfferPeriod}")
             Log.d(LOG_TAG, "inTrialPeriod ==> ${it.inTrialPeriod}")
+        }
+    }
+
+    // If at least one entitlement is active, then show text on UI as active
+    private fun handleActiveEntitlements(activeEntitlements: List<NamiEntitlement>) {
+        var isActive = false
+        var textResId = R.string.subscription_status_inactivate
+        if (activeEntitlements.isNotEmpty()) {
+            isActive = true
+            textResId = R.string.subscription_status_active
+        }
+        binding.subscriptionStatus.apply {
+            text = getText(textResId)
+            isEnabled = isActive
+        }
+    }
+
+    private fun evaluateLastPurchaseEvent(
+        activePurchases: List<NamiPurchase>,
+        namiPurchaseState: NamiPurchaseState,
+        errorMsg: String?
+    ) {
+        Log.d(LOG_TAG, "Purchase State ${namiPurchaseState.name}")
+        if (namiPurchaseState == NamiPurchaseState.PURCHASED) {
+            Log.d(LOG_TAG, "\nActive Purchases: ")
+            for (pur in activePurchases) {
+                Log.d(LOG_TAG, "\tSkuId: ${pur.skuId}")
+            }
+        } else {
+            Log.d(LOG_TAG, "Reason : ${errorMsg ?: "Unknown"}")
         }
     }
 

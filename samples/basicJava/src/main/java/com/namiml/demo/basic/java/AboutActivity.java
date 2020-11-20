@@ -10,12 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.namiml.demo.basic.java.databinding.ActivityAboutBinding;
 import com.namiml.ml.NamiMLManager;
 
-import java.util.Collections;
-import java.util.List;
-
 public class AboutActivity extends AppCompatActivity {
 
-    private static final List<String> CORE_CONTENT_LABELS = Collections.singletonList("About");
+    private static final String CORE_CONTENT_LABEL = "About";
 
     static Intent getIntent(Context context) {
         return new Intent(context, AboutActivity.class);
@@ -35,13 +32,13 @@ public class AboutActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         ((BasicApplication) getApplication()).allowAutoRaisingPaywall = false;
-        NamiMLManager.enterCoreContent(CORE_CONTENT_LABELS);
+        NamiMLManager.enterCoreContent(CORE_CONTENT_LABEL);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         ((BasicApplication) getApplication()).allowAutoRaisingPaywall = true;
-        NamiMLManager.exitCoreContent(CORE_CONTENT_LABELS);
+        NamiMLManager.exitCoreContent(CORE_CONTENT_LABEL);
     }
 }
