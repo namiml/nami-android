@@ -1,8 +1,8 @@
 package com.namiml.demo.linked
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -10,17 +10,18 @@ import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.namiml.Nami
 import com.namiml.NamiExternalIdentifierType
+import com.namiml.billing.NamiPurchase
 import com.namiml.billing.NamiPurchaseCompleteResult
 import com.namiml.billing.NamiPurchaseManager
 import com.namiml.demo.linked.databinding.ActivityPaywallBinding
 import com.namiml.demo.linked.databinding.ViewSkuButtonGroupBinding
 import com.namiml.paywall.NamiPaywall
 import com.namiml.paywall.NamiSKU
+import com.namiml.paywall.PaywallStyleData
 
 class PaywallActivity : AppCompatActivity() {
 
@@ -76,10 +77,11 @@ class PaywallActivity : AppCompatActivity() {
     private fun setupUi(namiPaywall: NamiPaywall?, skus: List<NamiSKU>?) {
         val namiPaywallLocal = namiPaywall ?: return
         setupPaywallBackground(namiPaywallLocal)
-        setupCloseButton(namiPaywallLocal)
+        setupCloseButton(namiPaywallLocal, namiPaywallLocal.styleData)
         setupHeaderBody(namiPaywallLocal)
         skus?.let {
-            buildCallToActionButtons(skus, binding.linkedPaywallProductParent)
+            val featuredSkuIds = namiPaywall.formattedSkus.filter { it.featured }.map { it.id }
+            buildCallToActionButtons(skus, binding, namiPaywallLocal.styleData, featuredSkuIds)
         }
         setupSignInButton(namiPaywallLocal)
         setupRestoreButton(namiPaywallLocal)
@@ -143,11 +145,14 @@ class PaywallActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupCloseButton(namiPaywall: NamiPaywall) {
+    private fun setupCloseButton(namiPaywall: NamiPaywall, styleData: PaywallStyleData?) {
         if (namiPaywall.allowClosing) {
             allowBackPress = true
             binding.linkedPaywallClose.apply {
                 visibility = View.VISIBLE
+                styleData?.closeButtonTextColor?.let {
+                    setColorFilter(Color.parseColor(it))
+                }
                 setOnClickListener {
                     finish()
                 }
@@ -165,61 +170,57 @@ class PaywallActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * @return Return formatted button label
-     */
-    private fun getLabel(namiSKU: NamiSKU): String {
-        return namiSKU.generateButtonLabelForPaywall(this) ?: run {
-            if (IS_DEVELOPMENT_MODE_ON) {
-                getString(R.string.sku_error_title)
-            } else {
-                "${namiSKU.skuDetails.title}} - ${namiSKU.skuDetails.price}"
-            }
-        }
-    }
-
-    @SuppressLint("InflateParams")
-    private fun getSKUButton(
-        buttonText: CharSequence,
-        subtitle: CharSequence? = null,
-        listener: View.OnClickListener? = null
-    ): View {
-        ViewSkuButtonGroupBinding.inflate(layoutInflater, null, false).also { binding ->
-            binding.skuButton.apply {
-                text = buttonText
-                listener?.let { buttonListener ->
-                    setOnClickListener(buttonListener)
+    private fun buildCallToActionButtons(
+        skus: List<NamiSKU>,
+        binding: ActivityPaywallBinding,
+        styleData: PaywallStyleData?,
+        featuredSkuIds: List<String>
+    ) {
+        val purchases = NamiPurchaseManager.allPurchases()
+        skus.forEachIndexed { index, namiSKU ->
+            val buttonGroupBinding = when (index) {
+                0 -> {
+                    binding.linkedPaywallProductOne
+                }
+                1 -> {
+                    binding.linkedPaywallProductTwo
+                }
+                else -> {
+                    binding.linkedPaywallProductThree
                 }
             }
-            binding.skuButtonSubtitle.apply {
-                visibility = View.VISIBLE
-                text = subtitle
-            }
-            return binding.root
+            setButtonData(buttonGroupBinding, namiSKU, purchases, styleData, featuredSkuIds)
         }
     }
 
-    /**
-     * Return null if namiSKU is well-formed value. Other return the skuID for debugging purposes
-     */
-    private fun getSubTitle(namiSKU: NamiSKU): CharSequence? {
-        return if (IS_DEVELOPMENT_MODE_ON) {
-            getString(R.string.sku_error_sku_ref, namiSKU.skuId)
-        } else {
-            null
-        }
-    }
-
-    private fun buildCallToActionButtons(skus: List<NamiSKU>, container: ViewGroup) {
-        for (namiSKU in skus) {
-            getSKUButton(
-                buttonText = getLabel(namiSKU),
-                subtitle = getSubTitle(namiSKU),
-                listener = {
-                    NamiPurchaseManager.buySKU(this, namiSKU.skuId, onPurchaseComplete)
+    private fun setButtonData(
+        binding: ViewSkuButtonGroupBinding,
+        namiSKU: NamiSKU,
+        allPurchases: List<NamiPurchase>,
+        styleData: PaywallStyleData?,
+        featuredSkuIds: List<String>
+    ) {
+        val skuId = namiSKU.skuId
+        binding.apply {
+            with(skuDescription) {
+                text = namiSKU.skuDetails.description
+                styleData?.skuButtonTextColor?.let { textColor ->
+                    setTextColor(Color.parseColor(textColor))
                 }
-            ).also { button ->
-                container.addView(button)
+            }
+            skuPrice.text = namiSKU.skuDetails.price
+            if (allPurchases.any { it.skuId == skuId }) {
+                skuActiveIndicator.visibility = View.VISIBLE
+            }
+            if (featuredSkuIds.contains(namiSKU.id)) {
+                skuFeaturedIndicator.visibility = View.VISIBLE
+            }
+            styleData?.skuButtonColor?.let { bgColor ->
+                skuParent.setBackgroundColor(Color.parseColor(bgColor))
+            }
+            root.visibility = View.VISIBLE
+            root.setOnClickListener {
+                NamiPurchaseManager.buySKU(this@PaywallActivity, skuId, onPurchaseComplete)
             }
         }
     }
@@ -230,6 +231,8 @@ class PaywallActivity : AppCompatActivity() {
             "Purchase flow completed, isSuccessful=${it.isSuccessful}, " +
                     "code=${it.billingResponseCode}"
         )
-        finish()
+        if (it.isSuccessful) {
+            finish()
+        }
     }
 }

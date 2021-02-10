@@ -21,6 +21,9 @@
         <activity android:name=".AboutActivity" />
         <activity
             android:name=".PaywallActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
             android:theme="@style/PaywallTheme" />
     </application>
 

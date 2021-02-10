@@ -18,4 +18,6 @@
     <string name="restore_purchase">Restore Purchase</string>
     <string name="sku_error_sku_ref">RefId: %1$s</string>
     <string name="sku_error_title">sku_id not found in Store</string>
+    <string name="active">active</string>
+    <string name="featured">featured</string>
 </resources>
