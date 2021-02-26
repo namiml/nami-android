@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(AboutActivity.getIntent(this))
         }
         binding.subscriptionButton.onThrottledClick {
-            NamiMLManager.coreAction(listOf("subscribe"))
+            NamiMLManager.coreAction("subscribe")
             if (NamiPaywallManager.canRaisePaywall()) {
                 NamiPaywallManager.raisePaywall(this)
             }

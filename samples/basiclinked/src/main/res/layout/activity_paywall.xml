@@ -8,24 +8,23 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?actionBarSize"
-        android:paddingTop="@dimen/baseline_4x">
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/linked_paywall_bg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:backgroundTint="@color/paywall_bg_tint"
+            android:backgroundTint="#33000000"
             android:backgroundTintMode="src_over"
             android:contentDescription="@null"
             android:scaleType="fitXY"
-            tools:background="@tools:sample/backgrounds/scenic" />
+            tools:background="@android:color/holo_blue_light" />
 
         <ImageView
             android:id="@+id/linked_paywall_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/baseline_6x"
             android:contentDescription="@string/cd_close"
             android:padding="@dimen/baseline_4x"
             android:src="@drawable/ic_close"
@@ -39,9 +38,10 @@
             style="@style/TextAppearance.MaterialComponents.Headline5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/baseline_4x"
             android:fontFamily="serif"
             android:paddingHorizontal="@dimen/baseline_6x"
-            android:shadowColor="@color/black"
+            android:shadowColor="@color/nami_black"
             android:shadowDx="0"
             android:shadowDy="0"
             android:shadowRadius="3"
@@ -60,16 +60,55 @@
             android:layout_marginTop="@dimen/baseline_6x"
             android:paddingHorizontal="@dimen/baseline_6x"
             android:paddingVertical="@dimen/baseline_half"
-            android:shadowColor="@color/black"
+            android:shadowColor="@color/nami_black"
             android:shadowDx="0"
             android:shadowDy="0"
             android:shadowRadius="3"
             android:textAlignment="center"
-            android:textColor="@color/white"
+            android:textColor="@color/nami_white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/linked_paywall_header"
             tools:text="@tools:sample/lorem" />
+
+        <include
+            android:id="@+id/linked_paywall_product_one"
+            layout="@layout/view_sku_button_group"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintDimensionRatio="2:3"
+            app:layout_constraintEnd_toStartOf="@id/linked_paywall_product_two"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guideline_40"
+            app:layout_constraintWidth_percent="0.275"
+            tools:visibility="visible" />
+
+        <include
+            android:id="@+id/linked_paywall_product_two"
+            layout="@layout/view_sku_button_group"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/linked_paywall_product_one"
+            app:layout_constraintDimensionRatio="2:3"
+            app:layout_constraintEnd_toStartOf="@id/linked_paywall_product_three"
+            app:layout_constraintStart_toEndOf="@id/linked_paywall_product_one"
+            app:layout_constraintTop_toTopOf="@id/linked_paywall_product_one"
+            tools:visibility="visible" />
+
+        <include
+            android:id="@+id/linked_paywall_product_three"
+            layout="@layout/view_sku_button_group"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/linked_paywall_product_one"
+            app:layout_constraintDimensionRatio="2:3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/linked_paywall_product_two"
+            app:layout_constraintTop_toTopOf="@id/linked_paywall_product_two"
+            tools:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/linked_paywall_product_parent"
@@ -78,6 +117,7 @@
             android:layout_marginTop="@dimen/baseline_12x"
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/baseline_4x"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/linked_paywall_body"
@@ -88,14 +128,14 @@
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/baseline_6x"
-            android:text="@string/sign_in"
+            android:layout_marginTop="@dimen/baseline_4x"
+            android:text="@string/nami_sign_in"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/linked_paywall_product_parent"
+            app:layout_constraintTop_toBottomOf="@id/linked_paywall_product_one"
             tools:visibility="visible" />
 
         <com.google.android.material.button.MaterialButton
@@ -103,7 +143,7 @@
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/restore_purchase"
+            android:text="@string/nami_restore_purchase"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:visibility="gone"
@@ -115,7 +155,7 @@
         <ScrollView
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/baseline_4x"
+            android:layout_marginTop="@dimen/baseline_2x"
             android:paddingHorizontal="@dimen/baseline_6x"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -131,7 +171,7 @@
                     android:id="@+id/linked_paywall_purchase_terms"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:lineSpacingExtra="4dp"
+                    android:fontFamily="serif-monospace"
                     android:textColor="@color/white"
                     android:textSize="12sp"
                     android:visibility="gone"
@@ -143,7 +183,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/baseline_2x"
-                    android:lineSpacingExtra="4dp"
+                    android:fontFamily="serif-monospace"
                     android:textColor="@color/white"
                     android:textSize="12sp"
                     android:visibility="gone"
@@ -156,6 +196,13 @@
 
             </LinearLayout>
         </ScrollView>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_40"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.40" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
