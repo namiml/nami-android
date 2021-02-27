@@ -80,7 +80,7 @@ class PaywallActivity : AppCompatActivity() {
         setupCloseButton(namiPaywallLocal, namiPaywallLocal.styleData)
         setupHeaderBody(namiPaywallLocal)
         skus?.let {
-            val featuredSkuIds = namiPaywall.formattedSkus.filter { it.featured }.map { it.id }
+            val featuredSkuIds = namiPaywall.formattedSkus.filter { it.featured }.map { it.skuId }
             buildCallToActionButtons(skus, binding, namiPaywallLocal.styleData, featuredSkuIds)
         }
         setupSignInButton(namiPaywallLocal)
@@ -212,7 +212,7 @@ class PaywallActivity : AppCompatActivity() {
             if (allPurchases.any { it.skuId == skuId }) {
                 skuActiveIndicator.visibility = View.VISIBLE
             }
-            if (featuredSkuIds.contains(namiSKU.id)) {
+            if (featuredSkuIds.contains(namiSKU.skuId)) {
                 skuFeaturedIndicator.visibility = View.VISIBLE
             }
             styleData?.skuButtonColor?.let { bgColor ->
