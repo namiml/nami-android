@@ -28,8 +28,12 @@ class MainActivity : AppCompatActivity() {
         }
         binding.subscriptionButton.onThrottledClick {
             NamiMLManager.coreAction("subscribe")
-            if (NamiPaywallManager.canRaisePaywall()) {
-                NamiPaywallManager.raisePaywall(this)
+            NamiPaywallManager.preparePaywallForDisplay { success, error ->
+                if (success) {
+                    NamiPaywallManager.raisePaywall(this)
+                } else {
+                    Log.d(LOG_TAG, "preparePaywallForDisplay failed -> $error")
+                }
             }
         }
     }

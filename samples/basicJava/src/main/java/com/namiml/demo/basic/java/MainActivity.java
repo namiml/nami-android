@@ -102,9 +102,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void onSubscriptionClicked(Activity activity) {
         NamiMLManager.coreAction("subscribe");
-        if (NamiPaywallManager.canRaisePaywall()) {
-            NamiPaywallManager.raisePaywall(activity);
-        }
+        NamiPaywallManager.preparePaywallForDisplay((success, error) -> {
+            if (success) {
+                NamiPaywallManager.raisePaywall(activity);
+            } else {
+                Log.d(LOG_TAG, "preparePaywallForDisplay failed --> " + error);
+            }
+            return Unit.INSTANCE;
+        });
     }
 
     private void evaluateLastPurchaseEvent(
