@@ -16,11 +16,12 @@ import com.namiml.entitlement.NamiEntitlementManager
 import com.namiml.ml.NamiMLManager
 import com.namiml.paywall.NamiPaywallManager
 
-const val LOG_TAG = "DemoBasic"
+private const val THROTTLED_CLICK_DELAY = 500L // in millis
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -119,7 +120,7 @@ class MainActivity : AppCompatActivity() {
             this.isClickable = false
             this.postDelayed({
                 this.isClickable = true
-            }, 500)
+            }, THROTTLED_CLICK_DELAY)
             invokeWhenClicked()
         }
     }
@@ -127,7 +128,8 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (NamiPaywallManager.didUserCloseBlockingNamiPaywall(requestCode, resultCode)) {
-            Toast.makeText(this, "User closed the paywall", Toast.LENGTH_SHORT).show()
+            val msg = "User closed a blocking paywall"
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
         }
     }
 }

@@ -14,6 +14,8 @@ import com.namiml.entitlement.NamiEntitlementManager
 import com.namiml.ml.NamiMLManager
 import com.namiml.paywall.NamiPaywallManager
 
+private const val THROTTLED_CLICK_DELAY = 500L // in millis
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -50,6 +52,7 @@ class MainActivity : AppCompatActivity() {
 
         // This is to register purchase change listener during lifecycle of this activity
         NamiPurchaseManager.registerPurchasesChangedListener { purchases, state, error ->
+            Log.d(LOG_TAG, "PurchasesChangedHandler triggered")
             evaluateLastPurchaseEvent(purchases, state, error)
         }
 
@@ -109,8 +112,9 @@ class MainActivity : AppCompatActivity() {
         Log.d(LOG_TAG, "Purchase State ${namiPurchaseState.name}")
         if (namiPurchaseState == NamiPurchaseState.PURCHASED) {
             Log.d(LOG_TAG, "\nActive Purchases: ")
-            for (pur in activePurchases) {
-                Log.d(LOG_TAG, "\tSkuId: ${pur.skuId}")
+            activePurchases.forEachIndexed { index, activePurchase ->
+                Log.d(LOG_TAG, "index $index")
+                Log.d(LOG_TAG, activePurchase.toString())
             }
         } else {
             Log.d(LOG_TAG, "Reason : ${errorMsg ?: "Unknown"}")
@@ -122,7 +126,7 @@ class MainActivity : AppCompatActivity() {
             this.isClickable = false
             this.postDelayed({
                 this.isClickable = true
-            }, 500)
+            }, THROTTLED_CLICK_DELAY)
             invokeWhenClicked()
         }
     }

@@ -53,7 +53,7 @@ class PaywallActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPaywallBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupUi(namiPaywall, skus)
+        setupUi(namiPaywall, skus ?: listOf())
         overridePendingTransition(R.anim.slide_up, R.anim.stay_still)
     }
 
@@ -74,15 +74,13 @@ class PaywallActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupUi(namiPaywall: NamiPaywall?, skus: List<NamiSKU>?) {
+    private fun setupUi(namiPaywall: NamiPaywall?, skus: List<NamiSKU>) {
         val namiPaywallLocal = namiPaywall ?: return
         setupPaywallBackground(namiPaywallLocal)
         setupCloseButton(namiPaywallLocal, namiPaywallLocal.styleData)
         setupHeaderBody(namiPaywallLocal)
-        skus?.let {
-            val featuredSkuIds = namiPaywall.formattedSkus.filter { it.featured }.map { it.skuId }
-            buildCallToActionButtons(skus, binding, namiPaywallLocal.styleData, featuredSkuIds)
-        }
+        val featuredSkuIds = namiPaywall.formattedSkus.filter { it.featured }.map { it.skuId }
+        buildCallToActionButtons(skus, binding, namiPaywallLocal.styleData, featuredSkuIds)
         setupSignInButton(namiPaywallLocal)
         setupRestoreButton(namiPaywallLocal)
         namiPaywallLocal.purchaseTerms?.let {
