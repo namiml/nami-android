@@ -12,6 +12,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Consumer;
 
+import com.namiml.NamiFailureHandler;
+import com.namiml.NamiResultCallback;
+import com.namiml.NamiSuccessHandler;
 import com.namiml.billing.NamiPurchase;
 import com.namiml.billing.NamiPurchaseManager;
 import com.namiml.billing.NamiPurchaseState;
@@ -22,6 +25,8 @@ import com.namiml.entitlement.NamiEntitlement;
 import com.namiml.entitlement.NamiEntitlementManager;
 import com.namiml.ml.NamiMLManager;
 import com.namiml.paywall.NamiPaywallManager;
+import com.namiml.paywall.PreparePaywallError;
+import com.namiml.paywall.PreparePaywallResult;
 
 import java.util.List;
 
@@ -29,6 +34,7 @@ import kotlin.Unit;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final long THROTTLED_CLICK_DELAY = 500L; // in millis
     private static final String LOG_TAG = "DemoBasicJava";
     ActivityMainBinding binding;
 
@@ -102,13 +108,21 @@ public class MainActivity extends AppCompatActivity {
 
     private void onSubscriptionClicked(Activity activity) {
         NamiMLManager.coreAction("subscribe");
-        NamiPaywallManager.preparePaywallForDisplay((success, error) -> {
-            if (success) {
-                NamiPaywallManager.raisePaywall(activity);
-            } else {
-                Log.d(LOG_TAG, "preparePaywallForDisplay failed --> " + error);
+        NamiPaywallManager.preparePaywallForDisplay(new NamiResultCallback<PreparePaywallResult>() {
+            @Override
+            public void invoke(PreparePaywallResult result) {
+                result.onSuccessOrElse(new NamiSuccessHandler() {
+                    @Override
+                    public void invoke() {
+                        NamiPaywallManager.raisePaywall(activity);
+                    }
+                }, new NamiFailureHandler<PreparePaywallError>() {
+                    @Override
+                    public void invoke(@NonNull PreparePaywallError error) {
+                        Log.d("TAG", "preparePaywallForDisplay Error -> " + error);
+                    }
+                });
             }
-            return Unit.INSTANCE;
         });
     }
 
@@ -131,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
     private void setOnThrottledClick(View view, Consumer<Activity> consumer) {
         view.setOnClickListener(viewLocal -> {
             viewLocal.setClickable(false);
-            viewLocal.postDelayed(() -> viewLocal.setClickable(true), 500);
+            viewLocal.postDelayed(() -> viewLocal.setClickable(true), THROTTLED_CLICK_DELAY);
             consumer.accept(MainActivity.this);
         });
     }

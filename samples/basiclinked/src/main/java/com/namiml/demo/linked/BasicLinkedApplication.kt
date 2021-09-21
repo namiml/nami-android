@@ -27,7 +27,7 @@ class BasicLinkedApplication : Application() {
         Nami.configure(
             NamiConfiguration.build(this, NAMI_APP_PLATFORM_ID) {
                 logLevel = NamiLogLevel.DEBUG.takeIf { BuildConfig.DEBUG } ?: NamiLogLevel.ERROR
-                developmentMode = IS_DEVELOPMENT_MODE_ON
+                // developmentMode = IS_DEVELOPMENT_MODE_ON
                 // bypassStore = false
             }
         )
