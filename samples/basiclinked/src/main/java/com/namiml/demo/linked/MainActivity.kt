@@ -13,6 +13,7 @@ import com.namiml.entitlement.NamiEntitlement
 import com.namiml.entitlement.NamiEntitlementManager
 import com.namiml.ml.NamiMLManager
 import com.namiml.paywall.NamiPaywallManager
+import com.namiml.paywall.PreparePaywallResult
 
 private const val THROTTLED_CLICK_DELAY = 500L // in millis
 
@@ -30,11 +31,14 @@ class MainActivity : AppCompatActivity() {
         }
         binding.subscriptionButton.onThrottledClick {
             NamiMLManager.coreAction("subscribe")
-            NamiPaywallManager.preparePaywallForDisplay { success, error ->
-                if (success) {
-                    NamiPaywallManager.raisePaywall(this)
-                } else {
-                    Log.d(LOG_TAG, "preparePaywallForDisplay failed -> $error")
+            NamiPaywallManager.preparePaywallForDisplay { result ->
+                when (result) {
+                    is PreparePaywallResult.Success -> {
+                        NamiPaywallManager.raisePaywall(this)
+                    }
+                    is PreparePaywallResult.Failure -> {
+                        Log.d(LOG_TAG, "preparePaywallForDisplay Error -> ${result.error}")
+                    }
                 }
             }
         }
@@ -45,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 
         // This is to register entitlement change listener during lifecycle of this activity
         NamiEntitlementManager.registerEntitlementChangeListener { activeEntitlements ->
-            Log.d(LOG_TAG, "Entitlements Change Listener triggered")
+            Log.d(LOG_TAG, "EntitlementChangeListener triggered")
             logActiveEntitlements(activeEntitlements)
             handleActiveEntitlements(activeEntitlements)
         }

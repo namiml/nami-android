@@ -15,6 +15,7 @@ import com.namiml.entitlement.NamiEntitlement
 import com.namiml.entitlement.NamiEntitlementManager
 import com.namiml.ml.NamiMLManager
 import com.namiml.paywall.NamiPaywallManager
+import com.namiml.paywall.PreparePaywallResult
 
 private const val THROTTLED_CLICK_DELAY = 500L // in millis
 
@@ -32,11 +33,14 @@ class MainActivity : AppCompatActivity() {
         }
         binding.subscriptionButton.onThrottledClick {
             NamiMLManager.coreAction("subscribe")
-            NamiPaywallManager.preparePaywallForDisplay { success, error ->
-                if (success) {
-                    NamiPaywallManager.raisePaywall(this)
-                } else {
-                    Log.d(LOG_TAG, "preparePaywallForDisplay failed -> $error")
+            NamiPaywallManager.preparePaywallForDisplay { result ->
+                when (result) {
+                    is PreparePaywallResult.Success -> {
+                        NamiPaywallManager.raisePaywall(this)
+                    }
+                    is PreparePaywallResult.Failure -> {
+                        Log.d(LOG_TAG, "preparePaywallForDisplay Error -> ${result.error}")
+                    }
                 }
             }
         }
@@ -57,10 +61,15 @@ class MainActivity : AppCompatActivity() {
             evaluateLastPurchaseEvent(purchases, state, error)
         }
 
-        // This is to check for active entitlements on app resume to take any action if you want
         handleActiveEntitlements(NamiEntitlementManager.activeEntitlements())
 
-        logCustomerJourneyState()
+        NamiCustomerManager.currentCustomerJourneyState()?.let {
+            Log.d(LOG_TAG, "currentCustomerJourneyState")
+            Log.d(LOG_TAG, "formerSubscriber ==> ${it.formerSubscriber}")
+            Log.d(LOG_TAG, "inGracePeriod ==> ${it.inGracePeriod}")
+            Log.d(LOG_TAG, "inIntroOfferPeriod ==> ${it.inIntroOfferPeriod}")
+            Log.d(LOG_TAG, "inTrialPeriod ==> ${it.inTrialPeriod}")
+        }
     }
 
     private fun logActiveEntitlements(activeEntitlements: List<NamiEntitlement>) {
@@ -72,16 +81,6 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             Log.d(LOG_TAG, "No active entitlements")
-        }
-    }
-
-    private fun logCustomerJourneyState() {
-        NamiCustomerManager.currentCustomerJourneyState()?.let {
-            Log.d(LOG_TAG, "currentCustomerJourneyState")
-            Log.d(LOG_TAG, "formerSubscriber ==> ${it.formerSubscriber}")
-            Log.d(LOG_TAG, "inGracePeriod ==> ${it.inGracePeriod}")
-            Log.d(LOG_TAG, "inIntroOfferPeriod ==> ${it.inIntroOfferPeriod}")
-            Log.d(LOG_TAG, "inTrialPeriod ==> ${it.inTrialPeriod}")
         }
     }
 

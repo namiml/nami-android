@@ -24,7 +24,7 @@ class AboutActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         binding.toolbar.apply {
-            setNavigationIcon(R.drawable.ic_arrow_back)
+            setNavigationIcon(R.drawable.ic_arrow_back_black_24dp)
             setNavigationOnClickListener {
                 onBackPressed()
             }
