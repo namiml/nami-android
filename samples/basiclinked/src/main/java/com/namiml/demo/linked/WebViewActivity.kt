@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import com.namiml.demo.linked.databinding.ActivityWebViewBinding
 
@@ -18,11 +17,11 @@ class WebViewActivity : AppCompatActivity() {
         internal fun getIntent(
             context: Context,
             url: String,
-            @StringRes toolbarTitleResId: Int
+            toolbarTitle: String
         ): Intent {
             return Intent(context, WebViewActivity::class.java).apply {
                 putExtra(INTENT_EXTRA_KEY_URL, url)
-                putExtra(INTENT_EXTRA_KEY_TOOLBAR_TITLE, toolbarTitleResId)
+                putExtra(INTENT_EXTRA_KEY_TOOLBAR_TITLE, toolbarTitle)
             }
         }
     }
@@ -41,12 +40,8 @@ class WebViewActivity : AppCompatActivity() {
             }
         }
         intent?.let {
-            it.getStringExtra(INTENT_EXTRA_KEY_URL)?.let { url ->
-                setupWebView(url)
-            } ?: finish()
-            with(it.getIntExtra(INTENT_EXTRA_KEY_TOOLBAR_TITLE, R.string.terms_of_use)) {
-                setTitle(this)
-            }
+            it.getStringExtra(INTENT_EXTRA_KEY_URL)?.let { url -> setupWebView(url) } ?: finish()
+            it.getStringExtra(INTENT_EXTRA_KEY_TOOLBAR_TITLE)?.let { title -> setTitle(title) }
         } ?: finish()
     }
 

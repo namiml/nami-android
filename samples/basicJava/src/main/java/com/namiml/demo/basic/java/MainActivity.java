@@ -1,5 +1,7 @@
 package com.namiml.demo.basic.java;
 
+import static com.namiml.demo.basic.java.BasicApplication.LOG_TAG;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,8 +20,6 @@ import com.namiml.NamiSuccessHandler;
 import com.namiml.billing.NamiPurchase;
 import com.namiml.billing.NamiPurchaseManager;
 import com.namiml.billing.NamiPurchaseState;
-import com.namiml.customer.CustomerJourneyState;
-import com.namiml.customer.NamiCustomerManager;
 import com.namiml.demo.basic.java.databinding.ActivityMainBinding;
 import com.namiml.entitlement.NamiEntitlement;
 import com.namiml.entitlement.NamiEntitlementManager;
@@ -35,7 +35,6 @@ import kotlin.Unit;
 public class MainActivity extends AppCompatActivity {
 
     private static final long THROTTLED_CLICK_DELAY = 500L; // in millis
-    private static final String LOG_TAG = "DemoBasicJava";
     ActivityMainBinding binding;
 
     @Override
@@ -67,8 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
         // This is to check for active entitlements on app resume to take any action if you want
         handleActiveEntitlements(NamiEntitlementManager.activeEntitlements());
-
-        logCustomerJourneyState();
     }
 
     private void logActiveEntitlements(@NonNull List<NamiEntitlement> activeEntitlements) {
@@ -80,17 +77,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(LOG_TAG, "\tName: " + activeEntitlement.getName());
                 Log.d(LOG_TAG, "\tReferenceId: " + activeEntitlement.getReferenceId());
             }
-        }
-    }
-
-    private void logCustomerJourneyState() {
-        CustomerJourneyState customerJourneyState = NamiCustomerManager.currentCustomerJourneyState();
-        if (customerJourneyState != null) {
-            Log.d(LOG_TAG, "currentCustomerJourneyState");
-            Log.d(LOG_TAG, "formerSubscriber ==> " + customerJourneyState.getFormerSubscriber());
-            Log.d(LOG_TAG, "inGracePeriod ==> " + customerJourneyState.getInGracePeriod());
-            Log.d(LOG_TAG, "inIntroOfferPeriod ==> " + customerJourneyState.getInIntroOfferPeriod());
-            Log.d(LOG_TAG, "inTrialPeriod ==> " + customerJourneyState.getInTrialPeriod());
         }
     }
 

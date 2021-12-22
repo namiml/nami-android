@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.namiml.billing.NamiPurchase
 import com.namiml.billing.NamiPurchaseManager
 import com.namiml.billing.NamiPurchaseState
-import com.namiml.customer.NamiCustomerManager
 import com.namiml.demo.basic.databinding.ActivityMainBinding
 import com.namiml.entitlement.NamiEntitlement
 import com.namiml.entitlement.NamiEntitlementManager
@@ -62,14 +61,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         handleActiveEntitlements(NamiEntitlementManager.activeEntitlements())
-
-        NamiCustomerManager.currentCustomerJourneyState()?.let {
-            Log.d(LOG_TAG, "currentCustomerJourneyState")
-            Log.d(LOG_TAG, "formerSubscriber ==> ${it.formerSubscriber}")
-            Log.d(LOG_TAG, "inGracePeriod ==> ${it.inGracePeriod}")
-            Log.d(LOG_TAG, "inIntroOfferPeriod ==> ${it.inIntroOfferPeriod}")
-            Log.d(LOG_TAG, "inTrialPeriod ==> ${it.inTrialPeriod}")
-        }
     }
 
     private fun logActiveEntitlements(activeEntitlements: List<NamiEntitlement>) {

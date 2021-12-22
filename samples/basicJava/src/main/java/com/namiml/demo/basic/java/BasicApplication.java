@@ -1,12 +1,15 @@
 package com.namiml.demo.basic.java;
 
 import android.app.Application;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.namiml.Nami;
 import com.namiml.NamiConfiguration;
 import com.namiml.NamiExternalIdentifierType;
+// import com.namiml.NamiLanguageCode;
 import com.namiml.NamiLogLevel;
+import com.namiml.customer.NamiCustomerManager;
 import com.namiml.paywall.NamiPaywallManager;
 
 import kotlin.Unit;
@@ -14,6 +17,7 @@ import kotlin.Unit;
 public class BasicApplication extends Application {
 
     public boolean allowAutoRaisingPaywall = true;
+    public static final String LOG_TAG = "DemoBasicJava";
     private static final String TEST_EXTERNAL_IDENTIFIER = "9a9999a9-99aa-99a9-aa99-999a999999a9";
     private static final String NAMI_APP_PLATFORM_ID = "3d062066-9d3c-430e-935d-855e2c56dd8e";
 
@@ -24,6 +28,7 @@ public class BasicApplication extends Application {
                 .Builder(this, NAMI_APP_PLATFORM_ID);
         // builder.bypassStore(true);
         // builder.developmentMode(true);
+        // builder.namiLanguageCode(NamiLanguageCode.EN);
 
         if (BuildConfig.DEBUG) {
             builder.logLevel(NamiLogLevel.DEBUG);
@@ -40,6 +45,19 @@ public class BasicApplication extends Application {
             Nami.setExternalIdentifier(TEST_EXTERNAL_IDENTIFIER, NamiExternalIdentifierType.UUID);
             return Unit.INSTANCE;
         });
+
+        NamiCustomerManager.registerCustomerJourneyChangedListener((journeyState) -> {
+            Log.d(LOG_TAG, "Customer journey state changed:");
+            Log.d(LOG_TAG, "formerSubscriber ==>" + journeyState.formerSubscriber);
+            Log.d(LOG_TAG, "inGracePeriod ==> " + journeyState.inGracePeriod);
+            Log.d(LOG_TAG, "inIntroOfferPeriod ==> " + journeyState.inIntroOfferPeriod);
+            Log.d(LOG_TAG, "inTrialPeriod ==> " + journeyState.inTrialPeriod);
+            Log.d(LOG_TAG, "isCancelled ==> " + journeyState.isCancelled);
+            Log.d(LOG_TAG, "inPause ==> " + journeyState.inPause);
+            Log.d(LOG_TAG, "inAccountHold ==> " + journeyState.inAccountHold);
+            return Unit.INSTANCE;
+        });
+
 
         NamiPaywallManager.registerApplicationAutoRaisePaywallBlocker(
                 () -> allowAutoRaisingPaywall);

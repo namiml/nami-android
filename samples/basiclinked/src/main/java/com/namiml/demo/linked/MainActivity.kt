@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.namiml.billing.NamiPurchase
 import com.namiml.billing.NamiPurchaseManager
 import com.namiml.billing.NamiPurchaseState
-import com.namiml.customer.NamiCustomerManager
 import com.namiml.demo.linked.databinding.ActivityMainBinding
 import com.namiml.entitlement.NamiEntitlement
 import com.namiml.entitlement.NamiEntitlementManager
@@ -62,8 +61,6 @@ class MainActivity : AppCompatActivity() {
 
         // This is to check for active entitlements on app resume to take any action if you want
         handleActiveEntitlements(NamiEntitlementManager.activeEntitlements())
-
-        logCustomerJourneyState()
     }
 
     private fun logActiveEntitlements(activeEntitlements: List<NamiEntitlement>) {
@@ -75,16 +72,6 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             Log.d(LOG_TAG, "No active entitlements")
-        }
-    }
-
-    private fun logCustomerJourneyState() {
-        NamiCustomerManager.currentCustomerJourneyState()?.let {
-            Log.d(LOG_TAG, "currentCustomerJourneyState")
-            Log.d(LOG_TAG, "formerSubscriber ==> ${it.formerSubscriber}")
-            Log.d(LOG_TAG, "inGracePeriod ==> ${it.inGracePeriod}")
-            Log.d(LOG_TAG, "inIntroOfferPeriod ==> ${it.inIntroOfferPeriod}")
-            Log.d(LOG_TAG, "inTrialPeriod ==> ${it.inTrialPeriod}")
         }
     }
 
@@ -124,14 +111,14 @@ class MainActivity : AppCompatActivity() {
             Log.d(LOG_TAG, "Reason : ${errorMsg ?: "Unknown"}")
         }
     }
+}
 
-    private fun View.onThrottledClick(invokeWhenClicked: () -> Unit) {
-        setOnClickListener {
-            this.isClickable = false
-            this.postDelayed({
-                this.isClickable = true
-            }, THROTTLED_CLICK_DELAY)
-            invokeWhenClicked()
-        }
+fun View.onThrottledClick(invokeWhenClicked: () -> Unit) {
+    setOnClickListener {
+        this.isClickable = false
+        this.postDelayed({
+            this.isClickable = true
+        }, THROTTLED_CLICK_DELAY)
+        invokeWhenClicked()
     }
 }

@@ -11,7 +11,6 @@ import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.namiml.Nami
 import com.namiml.NamiExternalIdentifierType
 import com.namiml.billing.NamiPurchase
@@ -22,6 +21,7 @@ import com.namiml.demo.linked.databinding.ViewSkuButtonGroupBinding
 import com.namiml.paywall.NamiPaywall
 import com.namiml.paywall.NamiSKU
 import com.namiml.paywall.PaywallStyleData
+import com.namiml.paywall.getLinkifiedLegalCitations
 
 class PaywallActivity : AppCompatActivity() {
 
@@ -38,7 +38,7 @@ class PaywallActivity : AppCompatActivity() {
         fun getIntent(
             context: Context,
             namiPaywall: NamiPaywall,
-            skus: List<NamiSKU>?
+            skus: List<NamiSKU>?,
         ): Intent {
             this.namiPaywall = namiPaywall
             this.skus = skus
@@ -79,7 +79,7 @@ class PaywallActivity : AppCompatActivity() {
         setupPaywallBackground(namiPaywallLocal)
         setupCloseButton(namiPaywallLocal, namiPaywallLocal.styleData)
         setupHeaderBody(namiPaywallLocal)
-        val featuredSkuIds = namiPaywall.formattedSkus.filter { it.featured }.map { it.skuId }
+        val featuredSkuIds = namiPaywall.namiSkus.filter { it.featured }.map { it.skuId }
         buildCallToActionButtons(skus, binding, namiPaywallLocal.styleData, featuredSkuIds)
         setupSignInButton(namiPaywallLocal)
         setupRestoreButton(namiPaywallLocal)
@@ -90,14 +90,20 @@ class PaywallActivity : AppCompatActivity() {
             }
         }
 
-        val urlSpanListener: (widget: View, url: String, toolbarTitleResId: Int) -> Unit =
-            { _, url, titleResId ->
-                startActivity(WebViewActivity.getIntent(this, url, titleResId))
+        val urlSpanListener: (widget: View, url: String, toolbarTitle: String) -> Unit =
+            { _, url, title ->
+                startActivity(WebViewActivity.getIntent(this, url, title))
             }
-        namiPaywallLocal.getFooterText(this, urlSpanListener, urlSpanListener).let {
+        val legalCitations = namiPaywallLocal.legalCitations
+        if (legalCitations != null) {
+            val linkified = legalCitations.getLinkifiedLegalCitations(
+                legalCitations.clickWrapText,
+                urlSpanListener,
+                urlSpanListener
+            )
             binding.linkedPaywallTosPolicy.apply {
                 visibility = View.VISIBLE
-                text = it
+                text = linkified
                 movementMethod = LinkMovementMethod.getInstance()
             }
         }
@@ -111,9 +117,9 @@ class PaywallActivity : AppCompatActivity() {
     }
 
     private fun setupSignInButton(namiPaywall: NamiPaywall) {
-        if (namiPaywall.signInControl) {
+        if (namiPaywall.displayOptions.signInControl) {
             binding.linkedPaywallSignInButton.apply {
-                setOnClickListener {
+                onThrottledClick {
                     // Once user signs in, you may provide unique identifier that can be
                     // used to link different devices to the same customer in the Nami platform.
                     // Here at this stage, since we don't have real sign in flow in this demo
@@ -125,15 +131,17 @@ class PaywallActivity : AppCompatActivity() {
                     )
                 }
                 visibility = View.VISIBLE
+                text = namiPaywall.localeConfig.signInButtonText
             }
         }
     }
 
     private fun setupRestoreButton(namiPaywall: NamiPaywall) {
-        if (namiPaywall.restoreControl) {
+        if (namiPaywall.displayOptions.restoreControl) {
             binding.linkedPaywallRestoreButton.apply {
+                text = namiPaywall.localeConfig.restorePurchaseButtonText
                 visibility = View.VISIBLE
-                setOnClickListener {
+                onThrottledClick {
                     val intent = Intent(Intent.ACTION_VIEW).apply {
                         data = Uri.parse(PLAY_STORE_SUBSCRIPTION_URL)
                     }
@@ -144,7 +152,7 @@ class PaywallActivity : AppCompatActivity() {
     }
 
     private fun setupCloseButton(namiPaywall: NamiPaywall, styleData: PaywallStyleData?) {
-        if (namiPaywall.allowClosing) {
+        if (namiPaywall.displayOptions.allowClosing) {
             allowBackPress = true
             binding.linkedPaywallClose.apply {
                 visibility = View.VISIBLE
@@ -162,7 +170,7 @@ class PaywallActivity : AppCompatActivity() {
         namiPaywall.backgroundImage?.let { bitmap ->
             binding.linkedPaywallBg.background = BitmapDrawable(resources, bitmap)
         } ?: run {
-            with(ContextCompat.getColor(this, R.color.colorAccent)) {
+            with(getColor(R.color.colorAccent)) {
                 binding.linkedPaywallBg.background = ColorDrawable(this)
             }
         }
@@ -217,7 +225,7 @@ class PaywallActivity : AppCompatActivity() {
                 skuParent.setBackgroundColor(Color.parseColor(bgColor))
             }
             root.visibility = View.VISIBLE
-            root.setOnClickListener {
+            root.onThrottledClick {
                 NamiPurchaseManager.buySKU(this@PaywallActivity, skuId, onPurchaseComplete)
             }
         }

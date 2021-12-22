@@ -129,13 +129,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/baseline_4x"
-            android:text="@string/nami_sign_in"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/linked_paywall_product_one"
+            tools:text="@tools:sample/lorem"
             tools:visibility="visible" />
 
         <com.google.android.material.button.MaterialButton
@@ -143,13 +143,13 @@
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/nami_restore_purchase"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/linked_paywall_sign_in_button"
+            tools:text="@tools:sample/lorem"
             tools:visibility="visible" />
 
         <ScrollView
