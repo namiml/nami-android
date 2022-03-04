@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BasicJava</string>
+    <string name="app_name">Basic</string>
     <string name="about">About</string>
     <string name="go_to_about">Go to about</string>
     <string name="header_introduction">Introduction</string>
@@ -9,7 +9,7 @@
     <string name="header_info">Important info</string>
     <string name="body_info">Any Purchase will be remembered while the application is <b>Active, Suspended, Resume,</b> but cleared when the application is launched.\nExamine the application source code for more details on calls used to respond and monitor purchases.</string>
     <string name="subscribe">Subscribe</string>
-    <string name="subscription_status_label">Subscription is:</string>
-    <string name="subscription_status_active">Active</string>
-    <string name="subscription_status_inactivate">Inactive</string>
+    <string name="entitlement_status_label">Entitlement status: </string>
+    <string name="entitlement_status_active">Active</string>
+    <string name="entitlement_status_inactivate">Inactive</string>
 </resources>

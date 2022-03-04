@@ -28,15 +28,15 @@
 
         <TextView
             android:id="@+id/header_app_name"
-            style="@style/TextAppearance.AppCompat.Headline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/baseline_2x"
             android:text="@string/app_name"
-            android:textStyle="italic"
+            android:layout_marginTop="@dimen/baseline_2x"
+            style="@style/TextAppearance.AppCompat.Headline"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+            android:textStyle="italic"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <Button
             android:id="@+id/about_button"
@@ -115,11 +115,11 @@
 
         <TextView
             android:id="@+id/subscription_status_label"
-            style="@style/TextAppearance.MaterialComponents.Headline6"
+            style="@style/AppTheme.Header.6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/baseline_4x"
-            android:text="@string/subscription_status_label"
+            android:text="@string/entitlement_status_label"
             app:layout_constraintBottom_toTopOf="@id/subscription_button"
             app:layout_constraintEnd_toStartOf="@+id/subscription_status"
             app:layout_constraintHorizontal_chainStyle="packed"
@@ -129,7 +129,7 @@
 
         <TextView
             android:id="@+id/subscription_status"
-            style="@style/TextAppearance.MaterialComponents.Headline6"
+            style="@style/AppTheme.Header.6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/baseline_2x"
@@ -138,7 +138,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/subscription_status_label"
             app:layout_constraintTop_toTopOf="@+id/subscription_status_label"
-            tools:text="@string/subscription_status_inactivate" />
+            tools:text="@string/entitlement_status_inactivate" />
 
         <Button
             android:id="@+id/subscription_button"
@@ -146,7 +146,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/baseline_4x"
-            android:layout_marginBottom="@dimen/baseline_6x"
+            android:layout_marginBottom="@dimen/baseline_18x"
             android:text="@string/subscribe"
             android:textColor="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
