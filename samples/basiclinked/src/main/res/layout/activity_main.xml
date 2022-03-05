@@ -24,7 +24,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:logo="@drawable/logo_white" />
+            app:logo="@drawable/nami_logo_white" />
 
         <TextView
             android:id="@+id/header_app_name"
@@ -118,7 +118,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/baseline_4x"
-            android:text="@string/subscription_status_label"
+            android:text="@string/entitlement_status_label"
             app:layout_constraintBottom_toTopOf="@id/subscription_button"
             app:layout_constraintEnd_toStartOf="@+id/subscription_status"
             app:layout_constraintHorizontal_chainStyle="packed"
@@ -137,7 +137,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/subscription_status_label"
             app:layout_constraintTop_toTopOf="@+id/subscription_status_label"
-            tools:text="@string/subscription_status_inactivate" />
+            tools:text="@string/entitlement_status_inactivate" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/subscription_button"

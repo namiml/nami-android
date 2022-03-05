@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.namiml.billing.NamiPurchase
 import com.namiml.billing.NamiPurchaseManager
 import com.namiml.billing.NamiPurchaseState
-import com.namiml.customer.NamiCustomerManager
 import com.namiml.demo.basic.databinding.ActivityMainBinding
 import com.namiml.entitlement.NamiEntitlement
 import com.namiml.entitlement.NamiEntitlementManager
@@ -62,14 +61,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         handleActiveEntitlements(NamiEntitlementManager.activeEntitlements())
-
-        NamiCustomerManager.currentCustomerJourneyState()?.let {
-            Log.d(LOG_TAG, "currentCustomerJourneyState")
-            Log.d(LOG_TAG, "formerSubscriber ==> ${it.formerSubscriber}")
-            Log.d(LOG_TAG, "inGracePeriod ==> ${it.inGracePeriod}")
-            Log.d(LOG_TAG, "inIntroOfferPeriod ==> ${it.inIntroOfferPeriod}")
-            Log.d(LOG_TAG, "inTrialPeriod ==> ${it.inTrialPeriod}")
-        }
     }
 
     private fun logActiveEntitlements(activeEntitlements: List<NamiEntitlement>) {
@@ -87,10 +78,10 @@ class MainActivity : AppCompatActivity() {
     // If at least one entitlement is active, then show text on UI as active
     private fun handleActiveEntitlements(activeEntitlements: List<NamiEntitlement>) {
         var isActive = false
-        var textResId = R.string.subscription_status_inactivate
+        var textResId = R.string.entitlement_status_inactivate
         if (activeEntitlements.isNotEmpty()) {
             isActive = true
-            textResId = R.string.subscription_status_active
+            textResId = R.string.entitlement_status_active
         }
         binding.subscriptionStatus.apply {
             text = getText(textResId)
@@ -104,13 +95,22 @@ class MainActivity : AppCompatActivity() {
         errorMsg: String?
     ) {
         Log.d(LOG_TAG, "Purchase State ${namiPurchaseState.name}")
-        if (namiPurchaseState == NamiPurchaseState.PURCHASED) {
-            Log.d(LOG_TAG, "\nActive Purchases: ")
-            for (pur in activePurchases) {
-                Log.d(LOG_TAG, "\tSkuId: ${pur.skuId}")
+        when (namiPurchaseState) {
+            NamiPurchaseState.PURCHASED -> {
+                Log.d(LOG_TAG, "\nActive Purchases: ")
+                activePurchases.forEachIndexed { index, activePurchase ->
+                    Log.d(LOG_TAG, "index $index")
+                    Log.d(LOG_TAG, activePurchase.toString())
+                }
             }
-        } else {
-            Log.d(LOG_TAG, "Reason : ${errorMsg ?: "Unknown"}")
+            NamiPurchaseState.PENDING -> {
+                if (activePurchases.any { it.skuId == IAP_SKU }) {
+                    Log.d(LOG_TAG, "Found a pending consumable! Consuming now!")
+                    NamiPurchaseManager.consumePurchasedSKU(IAP_SKU)
+                }
+
+            }
+            else -> Log.d(LOG_TAG, "Reason : ${errorMsg ?: "Unknown"}")
         }
     }
 

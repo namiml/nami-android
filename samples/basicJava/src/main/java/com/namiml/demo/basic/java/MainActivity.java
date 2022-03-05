@@ -1,5 +1,7 @@
 package com.namiml.demo.basic.java;
 
+import static com.namiml.demo.basic.java.BasicApplication.LOG_TAG;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,8 +20,6 @@ import com.namiml.NamiSuccessHandler;
 import com.namiml.billing.NamiPurchase;
 import com.namiml.billing.NamiPurchaseManager;
 import com.namiml.billing.NamiPurchaseState;
-import com.namiml.customer.CustomerJourneyState;
-import com.namiml.customer.NamiCustomerManager;
 import com.namiml.demo.basic.java.databinding.ActivityMainBinding;
 import com.namiml.entitlement.NamiEntitlement;
 import com.namiml.entitlement.NamiEntitlementManager;
@@ -35,7 +35,6 @@ import kotlin.Unit;
 public class MainActivity extends AppCompatActivity {
 
     private static final long THROTTLED_CLICK_DELAY = 500L; // in millis
-    private static final String LOG_TAG = "DemoBasicJava";
     ActivityMainBinding binding;
 
     @Override
@@ -67,8 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
         // This is to check for active entitlements on app resume to take any action if you want
         handleActiveEntitlements(NamiEntitlementManager.activeEntitlements());
-
-        logCustomerJourneyState();
     }
 
     private void logActiveEntitlements(@NonNull List<NamiEntitlement> activeEntitlements) {
@@ -83,24 +80,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void logCustomerJourneyState() {
-        CustomerJourneyState customerJourneyState = NamiCustomerManager.currentCustomerJourneyState();
-        if (customerJourneyState != null) {
-            Log.d(LOG_TAG, "currentCustomerJourneyState");
-            Log.d(LOG_TAG, "formerSubscriber ==> " + customerJourneyState.getFormerSubscriber());
-            Log.d(LOG_TAG, "inGracePeriod ==> " + customerJourneyState.getInGracePeriod());
-            Log.d(LOG_TAG, "inIntroOfferPeriod ==> " + customerJourneyState.getInIntroOfferPeriod());
-            Log.d(LOG_TAG, "inTrialPeriod ==> " + customerJourneyState.getInTrialPeriod());
-        }
-    }
-
     // If at least one entitlement is active, then show text on UI as active
     private void handleActiveEntitlements(List<NamiEntitlement> activeEntitlements) {
-        int textResId = R.string.subscription_status_inactivate;
+        int textResId = R.string.entitlement_status_inactivate;
         boolean showAsActive = false;
         if (!activeEntitlements.isEmpty()) {
             showAsActive = true;
-            textResId = R.string.subscription_status_active;
+            textResId = R.string.entitlement_status_active;
         }
         binding.subscriptionStatus.setEnabled(showAsActive);
         binding.subscriptionStatus.setText(textResId);
