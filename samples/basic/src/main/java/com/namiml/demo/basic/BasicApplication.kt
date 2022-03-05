@@ -13,6 +13,7 @@ import com.namiml.paywall.NamiPaywallManager
 
 private const val TEST_EXTERNAL_IDENTIFIER = "9a9999a9-99aa-99a9-aa99-999a999999a9"
 const val LOG_TAG = "DemoBasic"
+const val IAP_SKU = "com.namiml.basic.demo.inapp.donate"
 
 class BasicApplication : Application() {
 

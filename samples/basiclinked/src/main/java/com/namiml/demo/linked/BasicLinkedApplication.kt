@@ -14,6 +14,7 @@ import com.namiml.paywall.NamiPaywallManager
 const val TEST_EXTERNAL_IDENTIFIER = "9a9999a9-99aa-99a9-aa99-999a999999a9"
 const val LOG_TAG = "DemoLinked"
 const val IS_DEVELOPMENT_MODE_ON = true
+const val IAP_SKU = "com.namiml.linked.demo.inapp.donate"
 
 class BasicLinkedApplication : Application() {
 
@@ -29,7 +30,7 @@ class BasicLinkedApplication : Application() {
             NamiConfiguration.build(this, NAMI_APP_PLATFORM_ID) {
                 logLevel = NamiLogLevel.DEBUG.takeIf { BuildConfig.DEBUG } ?: NamiLogLevel.ERROR
                 // developmentMode = IS_DEVELOPMENT_MODE_ON
-                // bypassStore = false
+                // bypassStore = true
             }
         )
 

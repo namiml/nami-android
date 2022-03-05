@@ -215,7 +215,7 @@ class PaywallActivity : AppCompatActivity() {
                 }
             }
             skuPrice.text = namiSKU.skuDetails.price
-            if (allPurchases.any { it.skuId == skuId }) {
+            if (allPurchases.any { it.skuId == skuId && it.skuId != IAP_SKU }) {
                 skuActiveIndicator.visibility = View.VISIBLE
             }
             if (featuredSkuIds.contains(namiSKU.skuId)) {
@@ -233,9 +233,9 @@ class PaywallActivity : AppCompatActivity() {
 
     private val onPurchaseComplete: ((NamiPurchaseCompleteResult) -> Unit) = {
         Log.d(
-            this.javaClass.name,
+            LOG_TAG,
             "Purchase flow completed, isSuccessful=${it.isSuccessful}, " +
-                    "code=${it.billingResponseCode}"
+                "code=${it.billingResponseCode}"
         )
         if (it.isSuccessful) {
             finish()

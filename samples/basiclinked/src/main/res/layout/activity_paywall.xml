@@ -18,13 +18,12 @@
             android:backgroundTintMode="src_over"
             android:contentDescription="@null"
             android:scaleType="fitXY"
-            tools:background="@android:color/holo_blue_light" />
+            tools:background="#ACCD84" />
 
         <ImageView
             android:id="@+id/linked_paywall_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/baseline_6x"
             android:contentDescription="@string/cd_close"
             android:padding="@dimen/baseline_4x"
             android:src="@drawable/ic_close"

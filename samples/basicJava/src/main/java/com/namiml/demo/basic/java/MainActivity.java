@@ -82,11 +82,11 @@ public class MainActivity extends AppCompatActivity {
 
     // If at least one entitlement is active, then show text on UI as active
     private void handleActiveEntitlements(List<NamiEntitlement> activeEntitlements) {
-        int textResId = R.string.subscription_status_inactivate;
+        int textResId = R.string.entitlement_status_inactivate;
         boolean showAsActive = false;
         if (!activeEntitlements.isEmpty()) {
             showAsActive = true;
-            textResId = R.string.subscription_status_active;
+            textResId = R.string.entitlement_status_active;
         }
         binding.subscriptionStatus.setEnabled(showAsActive);
         binding.subscriptionStatus.setText(textResId);

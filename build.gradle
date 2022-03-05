@@ -1,6 +1,6 @@
 buildscript {
     ext.kotlin_version = '1.4.31'
-    ext.nami_sdk_version = '2.0.0-alpha.01'
+    ext.nami_sdk_version = '2.0.0'
     ext.min_sdk = 26
     ext.target_sdk = 31
     ext.compile_sdk = 31
