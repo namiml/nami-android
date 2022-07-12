@@ -97,19 +97,16 @@ public class MainActivity extends AppCompatActivity {
     private void onSubscriptionClicked(Activity activity) {
         NamiMLManager.coreAction("subscribe");
 
-// TODO: convert the below to Java
-
-//        NamiCampaignManager.launch(this) { result ->
-//            when (result) {
-//            is LaunchCampaignResult.Success -> {
-//                Log.d(LOG_TAG, "Launch Campaign Success")
-//            }
-//            is LaunchCampaignResult.Failure -> {
-//                Log.d(LOG_TAG, "Launch Campaign Error -> ${result.error}")
-//            }
-//        }
-//        }
-
+        NamiCampaignManager.launch(this,"", (launchCampaignResult -> {
+            launchCampaignResult.onSuccessOrElse(
+                    () -> {
+                        Log.d(LOG_TAG, "Launch Campaign Success");
+                    }, error -> {
+                        Log.d(LOG_TAG, "Launch Campaign Error -> " + error);
+                    }
+            );
+            return Unit.INSTANCE;
+        }));
     }
 
     private void evaluateLastPurchaseEvent(
