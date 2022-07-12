@@ -6,7 +6,6 @@ import android.util.Log
 import android.widget.Toast
 import com.namiml.Nami
 import com.namiml.NamiConfiguration
-import com.namiml.NamiExternalIdentifierType
 import com.namiml.NamiLogLevel
 import com.namiml.customer.NamiCustomerManager
 import com.namiml.paywall.NamiPaywallManager
@@ -17,8 +16,6 @@ const val IS_DEVELOPMENT_MODE_ON = true
 const val IAP_SKU = "com.namiml.linked.demo.inapp.donate"
 
 class BasicLinkedApplication : Application() {
-
-    internal var allowAutoRaisingPaywall = true
 
     companion object {
         private const val NAMI_APP_PLATFORM_ID = "a95cef52-35e0-4794-8755-577492c2d5d1"
@@ -34,16 +31,16 @@ class BasicLinkedApplication : Application() {
             }
         )
 
-        NamiPaywallManager.registerSignInListener { cxt, paywall, developerPaywallId ->
+        NamiPaywallManager.registerSignInHandler { cxt, paywall ->
             Toast.makeText(cxt, "Sign in clicked", Toast.LENGTH_SHORT).show()
             // Once user signs in, you may provide unique identifier that can be used to link
             // different devices to the same customer in the Nami platform.
             // Here at this stage, since we don't have real sign in flow in this demo app, we're
             // just setting this test identifier when the sign-in button is pressed on paywall
-            Nami.setExternalIdentifier(TEST_EXTERNAL_IDENTIFIER, NamiExternalIdentifierType.UUID)
+            NamiCustomerManager.login(TEST_EXTERNAL_IDENTIFIER)
         }
 
-        NamiPaywallManager.registerPaywallRaiseListener { _, namiPaywall, skus, paywallId ->
+        NamiPaywallManager.renderCustomUiHandler { _, namiPaywall, skus ->
             namiPaywall.extraData?.let { extraDataFromPaywall ->
                 for (entry in extraDataFromPaywall.entries) {
                     Log.d(LOG_TAG, "${entry.key} --> ${entry.value}")
@@ -57,7 +54,7 @@ class BasicLinkedApplication : Application() {
             }
         }
 
-        NamiCustomerManager.registerCustomerJourneyChangedListener { journeyState ->
+        NamiCustomerManager.registerJourneyChangeHandler { journeyState ->
             Log.d(LOG_TAG, "Customer journey state changed:")
             Log.d(LOG_TAG, "formerSubscriber ==> ${journeyState.formerSubscriber}")
             Log.d(LOG_TAG, "inGracePeriod ==> ${journeyState.inGracePeriod}")
@@ -66,10 +63,6 @@ class BasicLinkedApplication : Application() {
             Log.d(LOG_TAG, "isCancelled ==> ${journeyState.isCancelled}")
             Log.d(LOG_TAG, "inPause ==> ${journeyState.inPause}")
             Log.d(LOG_TAG, "inAccountHold ==> ${journeyState.inAccountHold}")
-        }
-
-        NamiPaywallManager.registerApplicationAutoRaisePaywallBlocker {
-            return@registerApplicationAutoRaisePaywallBlocker allowAutoRaisingPaywall
         }
     }
 }

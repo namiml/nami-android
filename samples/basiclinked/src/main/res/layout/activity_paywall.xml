@@ -134,7 +134,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/linked_paywall_product_one"
-            tools:text="@tools:sample/lorem"
             tools:visibility="visible" />
 
         <com.google.android.material.button.MaterialButton
@@ -148,7 +147,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/linked_paywall_sign_in_button"
-            tools:text="@tools:sample/lorem"
             tools:visibility="visible" />
 
         <ScrollView

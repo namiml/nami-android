@@ -33,13 +33,11 @@ class AboutActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        (application as BasicLinkedApplication).allowAutoRaisingPaywall = false
         NamiMLManager.enterCoreContent(CORE_CONTENT_LABEL)
     }
 
     override fun onPause() {
         super.onPause()
-        (application as BasicLinkedApplication).allowAutoRaisingPaywall = true
         NamiMLManager.exitCoreContent(CORE_CONTENT_LABEL)
     }
 }

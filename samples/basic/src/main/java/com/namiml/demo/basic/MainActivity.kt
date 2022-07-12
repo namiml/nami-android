@@ -9,12 +9,14 @@ import androidx.appcompat.app.AppCompatActivity
 import com.namiml.billing.NamiPurchase
 import com.namiml.billing.NamiPurchaseManager
 import com.namiml.billing.NamiPurchaseState
+import com.namiml.campaign.LaunchCampaignResult
+import com.namiml.campaign.NamiCampaignManager
+import com.namiml.customer.NamiCustomerManager
 import com.namiml.demo.basic.databinding.ActivityMainBinding
 import com.namiml.entitlement.NamiEntitlement
 import com.namiml.entitlement.NamiEntitlementManager
 import com.namiml.ml.NamiMLManager
 import com.namiml.paywall.NamiPaywallManager
-import com.namiml.paywall.PreparePaywallResult
 
 private const val THROTTLED_CLICK_DELAY = 500L // in millis
 
@@ -24,21 +26,40 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Log.d(LOG_TAG, "MainActivity.kt - onCreate")
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         binding.aboutButton.onThrottledClick {
             startActivity(AboutActivity.getIntent(this))
         }
+
+        binding.refreshButton.onThrottledClick {
+            refresh()
+        }
+
+        binding.loginLogoutButton.onThrottledClick {
+            loginLogout()
+        }
+
+        binding.loginLogoutButton.text = if (NamiCustomerManager.isLoggedIn()) {
+            "Logout"
+        } else {
+            "Login"
+        }
+
         binding.subscriptionButton.onThrottledClick {
             NamiMLManager.coreAction("subscribe")
-            NamiPaywallManager.preparePaywallForDisplay { result ->
+
+            NamiCampaignManager.launch(this) { result ->
                 when (result) {
-                    is PreparePaywallResult.Success -> {
-                        NamiPaywallManager.raisePaywall(this)
+                    is LaunchCampaignResult.Success -> {
+                        Log.d(LOG_TAG, "Launch Campaign Success")
                     }
-                    is PreparePaywallResult.Failure -> {
-                        Log.d(LOG_TAG, "preparePaywallForDisplay Error -> ${result.error}")
+                    is LaunchCampaignResult.Failure -> {
+                        Log.d(LOG_TAG, "Launch Campaign Error -> ${result.error}")
                     }
                 }
             }
@@ -48,8 +69,10 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
+        Log.d(LOG_TAG, "MainActivity.kt - onResume")
+
         // This is to register entitlement change listener during lifecycle of this activity
-        NamiEntitlementManager.registerEntitlementChangeListener { activeEntitlements ->
+        NamiEntitlementManager.registerChangeListener { activeEntitlements ->
             Log.d(LOG_TAG, "Entitlements Change Listener triggered")
             logActiveEntitlements(activeEntitlements)
             handleActiveEntitlements(activeEntitlements)
@@ -57,10 +80,10 @@ class MainActivity : AppCompatActivity() {
 
         // This is to register purchase change listener during lifecycle of this activity
         NamiPurchaseManager.registerPurchasesChangedListener { purchases, state, error ->
+            Log.d(LOG_TAG, "Purchases Change Listener triggered")
             evaluateLastPurchaseEvent(purchases, state, error)
         }
-
-        handleActiveEntitlements(NamiEntitlementManager.activeEntitlements())
+        handleActiveEntitlements(NamiEntitlementManager.active())
     }
 
     private fun logActiveEntitlements(activeEntitlements: List<NamiEntitlement>) {
@@ -84,8 +107,12 @@ class MainActivity : AppCompatActivity() {
             textResId = R.string.entitlement_status_active
         }
         binding.subscriptionStatus.apply {
-            text = getText(textResId)
-            isEnabled = isActive
+            this@MainActivity.runOnUiThread(
+                java.lang.Runnable {
+                    text = getText(textResId)
+                    isEnabled = isActive
+                }
+            )
         }
     }
 
@@ -121,6 +148,52 @@ class MainActivity : AppCompatActivity() {
                 this.isClickable = true
             }, THROTTLED_CLICK_DELAY)
             invokeWhenClicked()
+        }
+    }
+
+    private fun refresh() {
+        Log.d(LOG_TAG, "Calling NamiEntitlementManager.refresh()")
+        NamiEntitlementManager.refresh() { activeEntitlements ->
+            if (!activeEntitlements.isNullOrEmpty()) {
+                logActiveEntitlements(activeEntitlements)
+                handleActiveEntitlements(activeEntitlements)
+            }
+        }
+    }
+
+    private fun loginLogout() {
+        Log.d(LOG_TAG, "Is logged in: ${NamiCustomerManager.loggedInId()}")
+
+        if (NamiCustomerManager.isLoggedIn()) {
+            val msg = "Logging out device from external id"
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+            NamiCustomerManager.logout()
+            binding.loginLogoutButton.text = "Login"
+        } else {
+//            TODO: use the AppSet ID instead of a hard coded one for the test app
+//            val client = AppSet.getClient(applicationContext) as AppSetIdClient
+//            val task: Task<AppSetIdInfo> = client.appSetIdInfo as Task<AppSetIdInfo>
+//
+//            task.addOnSuccessListener({
+//                // Determine current scope of app set ID.
+//                val scope: Int = it.scope
+//
+//                // Read app set ID value, which uses version 4 of the
+//                // universally unique identifier (UUID) format.
+//                val id: String = it.id
+//
+//                val msg = "Logging in device to ${id}"
+//                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+//
+//                NamiCustomerManager.login(id)
+//                binding.loginLogoutButton.text = "Logout"
+//
+//            })
+
+            val msg = "Logging in device to $TEST_EXTERNAL_IDENTIFIER"
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+            NamiCustomerManager.login(TEST_EXTERNAL_IDENTIFIER)
+            binding.loginLogoutButton.text = "Logout"
         }
     }
 

@@ -12,6 +12,13 @@
         android:theme="@style/AppTheme">
         <activity android:name=".WebViewActivity" />
         <activity
+            android:name=".PaywallActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/PaywallTheme" />
+        <activity android:name=".AboutActivity" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -20,13 +27,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AboutActivity" />
-        <activity
-            android:name=".PaywallActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/PaywallTheme" />
     </application>
 
 </manifest>

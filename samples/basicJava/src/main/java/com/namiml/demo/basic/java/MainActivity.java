@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         // This is to register entitlement change listener during lifecycle of this activity
-        NamiEntitlementManager.registerEntitlementChangeListener(activeEntitlements -> {
+        NamiEntitlementManager.registerChangeListener(activeEntitlements -> {
             Log.d(LOG_TAG, "Entitlements Change Listener triggered");
             logActiveEntitlements(activeEntitlements);
             handleActiveEntitlements(activeEntitlements);
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // This is to check for active entitlements on app resume to take any action if you want
-        handleActiveEntitlements(NamiEntitlementManager.activeEntitlements());
+        handleActiveEntitlements(NamiEntitlementManager.active());
     }
 
     private void logActiveEntitlements(@NonNull List<NamiEntitlement> activeEntitlements) {
@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void onSubscriptionClicked(Activity activity) {
         NamiMLManager.coreAction("subscribe");
+
         NamiPaywallManager.preparePaywallForDisplay(new NamiResultCallback<PreparePaywallResult>() {
             @Override
             public void invoke(PreparePaywallResult result) {

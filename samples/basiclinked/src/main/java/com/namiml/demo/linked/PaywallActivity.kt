@@ -11,11 +11,10 @@ import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.namiml.Nami
-import com.namiml.NamiExternalIdentifierType
 import com.namiml.billing.NamiPurchase
 import com.namiml.billing.NamiPurchaseCompleteResult
 import com.namiml.billing.NamiPurchaseManager
+import com.namiml.customer.NamiCustomerManager
 import com.namiml.demo.linked.databinding.ActivityPaywallBinding
 import com.namiml.demo.linked.databinding.ViewSkuButtonGroupBinding
 import com.namiml.paywall.NamiPaywall
@@ -125,10 +124,7 @@ class PaywallActivity : AppCompatActivity() {
                     // Here at this stage, since we don't have real sign in flow in this demo
                     // app, we're just setting this test identifier when the sign-in button is
                     // pressed on paywall
-                    Nami.setExternalIdentifier(
-                        TEST_EXTERNAL_IDENTIFIER,
-                        NamiExternalIdentifierType.UUID
-                    )
+                    NamiCustomerManager.login(TEST_EXTERNAL_IDENTIFIER)
                 }
                 visibility = View.VISIBLE
                 text = namiPaywall.localeConfig.signInButtonText

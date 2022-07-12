@@ -7,12 +7,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.namiml.billing.NamiPurchase
 import com.namiml.billing.NamiPurchaseManager
 import com.namiml.billing.NamiPurchaseState
+import com.namiml.campaign.LaunchCampaignResult
+import com.namiml.campaign.NamiCampaignManager
 import com.namiml.demo.linked.databinding.ActivityMainBinding
 import com.namiml.entitlement.NamiEntitlement
 import com.namiml.entitlement.NamiEntitlementManager
 import com.namiml.ml.NamiMLManager
-import com.namiml.paywall.NamiPaywallManager
-import com.namiml.paywall.PreparePaywallResult
 
 private const val THROTTLED_CLICK_DELAY = 500L // in millis
 
@@ -30,13 +30,13 @@ class MainActivity : AppCompatActivity() {
         }
         binding.subscriptionButton.onThrottledClick {
             NamiMLManager.coreAction("subscribe")
-            NamiPaywallManager.preparePaywallForDisplay { result ->
+            NamiCampaignManager.launch(this) { result ->
                 when (result) {
-                    is PreparePaywallResult.Success -> {
-                        NamiPaywallManager.raisePaywall(this)
+                    is LaunchCampaignResult.Success -> {
+                        Log.d(LOG_TAG, "Launch Campaign Success")
                     }
-                    is PreparePaywallResult.Failure -> {
-                        Log.d(LOG_TAG, "preparePaywallForDisplay Error -> ${result.error}")
+                    is LaunchCampaignResult.Failure -> {
+                        Log.d(LOG_TAG, "Launch Campaign Error -> ${result.error}")
                     }
                 }
             }
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         // This is to register entitlement change listener during lifecycle of this activity
-        NamiEntitlementManager.registerEntitlementChangeListener { activeEntitlements ->
+        NamiEntitlementManager.registerChangeListener { activeEntitlements ->
             Log.d(LOG_TAG, "EntitlementChangeListener triggered")
             logActiveEntitlements(activeEntitlements)
             handleActiveEntitlements(activeEntitlements)
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // This is to check for active entitlements on app resume to take any action if you want
-        handleActiveEntitlements(NamiEntitlementManager.activeEntitlements())
+        handleActiveEntitlements(NamiEntitlementManager.active())
     }
 
     private fun logActiveEntitlements(activeEntitlements: List<NamiEntitlement>) {
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        NamiEntitlementManager.registerEntitlementChangeListener(null)
+        NamiEntitlementManager.registerChangeListener(null)
         NamiPurchaseManager.registerPurchasesChangedListener(null)
     }
 
