@@ -20,6 +20,8 @@ import com.namiml.NamiSuccessHandler;
 import com.namiml.billing.NamiPurchase;
 import com.namiml.billing.NamiPurchaseManager;
 import com.namiml.billing.NamiPurchaseState;
+import com.namiml.campaign.NamiCampaignManager;
+import com.namiml.customer.NamiCustomerManager;
 import com.namiml.demo.basic.java.databinding.ActivityMainBinding;
 import com.namiml.entitlement.NamiEntitlement;
 import com.namiml.entitlement.NamiEntitlementManager;
@@ -95,22 +97,19 @@ public class MainActivity extends AppCompatActivity {
     private void onSubscriptionClicked(Activity activity) {
         NamiMLManager.coreAction("subscribe");
 
-        NamiPaywallManager.preparePaywallForDisplay(new NamiResultCallback<PreparePaywallResult>() {
-            @Override
-            public void invoke(PreparePaywallResult result) {
-                result.onSuccessOrElse(new NamiSuccessHandler() {
-                    @Override
-                    public void invoke() {
-                        NamiPaywallManager.raisePaywall(activity);
-                    }
-                }, new NamiFailureHandler<PreparePaywallError>() {
-                    @Override
-                    public void invoke(@NonNull PreparePaywallError error) {
-                        Log.d("TAG", "preparePaywallForDisplay Error -> " + error);
-                    }
-                });
-            }
-        });
+// TODO: convert the below to Java
+
+//        NamiCampaignManager.launch(this) { result ->
+//            when (result) {
+//            is LaunchCampaignResult.Success -> {
+//                Log.d(LOG_TAG, "Launch Campaign Success")
+//            }
+//            is LaunchCampaignResult.Failure -> {
+//                Log.d(LOG_TAG, "Launch Campaign Error -> ${result.error}")
+//            }
+//        }
+//        }
+
     }
 
     private void evaluateLastPurchaseEvent(
