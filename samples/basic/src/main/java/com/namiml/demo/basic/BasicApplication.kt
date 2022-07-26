@@ -25,7 +25,6 @@ class BasicApplication : Application() {
         Nami.configure(
             NamiConfiguration.build(this, NAMI_APP_PLATFORM_ID) {
                 logLevel = NamiLogLevel.DEBUG.takeIf { BuildConfig.DEBUG } ?: NamiLogLevel.ERROR
-
                 // developmentMode = true
                 // bypassStore = true
                 // namiLanguageCode = NamiLanguageCode.EN
@@ -41,7 +40,7 @@ class BasicApplication : Application() {
             NamiCustomerManager.login(TEST_EXTERNAL_IDENTIFIER)
         }
 
-        NamiCustomerManager.registerJourneyChangeHandler { journeyState ->
+        NamiCustomerManager.registerJourneyStateHandler { journeyState ->
             Log.d(LOG_TAG, "Customer journey state:")
             Log.d(LOG_TAG, "formerSubscriber ==> ${journeyState.formerSubscriber}")
             Log.d(LOG_TAG, "inGracePeriod ==> ${journeyState.inGracePeriod}")

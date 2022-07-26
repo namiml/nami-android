@@ -44,7 +44,7 @@ public class BasicApplication extends Application {
             return Unit.INSTANCE;
         });
 
-        NamiCustomerManager.registerJourneyChangeHandler((journeyState) -> {
+        NamiCustomerManager.registerJourneyStateHandler((journeyState) -> {
             Log.d(LOG_TAG, "Customer journey state changed:");
             Log.d(LOG_TAG, "formerSubscriber ==>" + journeyState.formerSubscriber);
             Log.d(LOG_TAG, "inGracePeriod ==> " + journeyState.inGracePeriod);

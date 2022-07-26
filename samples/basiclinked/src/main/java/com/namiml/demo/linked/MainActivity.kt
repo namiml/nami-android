@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         }
         binding.subscriptionButton.onThrottledClick {
             NamiMLManager.coreAction("subscribe")
-            NamiCampaignManager.launch(this) { result ->
+            NamiCampaignManager.launch(this, "linked_paywall") { result ->
                 when (result) {
                     is LaunchCampaignResult.Success -> {
                         Log.d(LOG_TAG, "Launch Campaign Success")
@@ -46,15 +46,15 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        // This is to register entitlement change listener during lifecycle of this activity
-        NamiEntitlementManager.registerChangeListener { activeEntitlements ->
-            Log.d(LOG_TAG, "EntitlementChangeListener triggered")
+        // This is to register an active entitlements handler during lifecycle of this activity
+        NamiEntitlementManager.registerActiveEntitlementsHandler { activeEntitlements ->
+            Log.d(LOG_TAG, "NamiActiveEntitlementsHandler triggered")
             logActiveEntitlements(activeEntitlements)
             handleActiveEntitlements(activeEntitlements)
         }
 
-        // This is to register purchase change listener during lifecycle of this activity
-        NamiPurchaseManager.registerPurchasesChangedListener { purchases, state, error ->
+        // This is to register purchase change handler during lifecycle of this activity
+        NamiPurchaseManager.registerPurchasesChangedHandler { purchases, state, error ->
             Log.d(LOG_TAG, "PurchasesChangedHandler triggered")
             evaluateLastPurchaseEvent(purchases, state, error)
         }
@@ -77,8 +77,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        NamiEntitlementManager.registerChangeListener(null)
-        NamiPurchaseManager.registerPurchasesChangedListener(null)
+        NamiEntitlementManager.registerActiveEntitlementsHandler(null)
+        NamiPurchaseManager.registerPurchasesChangedHandler(null)
     }
 
     // If at least one entitlement is active, then show text on UI as active
@@ -90,8 +90,12 @@ class MainActivity : AppCompatActivity() {
             textResId = R.string.entitlement_status_active
         }
         binding.subscriptionStatus.apply {
-            text = getText(textResId)
-            isEnabled = isActive
+            this@MainActivity.runOnUiThread(
+                java.lang.Runnable {
+                    text = getText(textResId)
+                    isEnabled = isActive
+                }
+            )
         }
     }
 
@@ -114,7 +118,6 @@ class MainActivity : AppCompatActivity() {
                     Log.d(LOG_TAG, "Found a pending consumable! Consuming now!")
                     NamiPurchaseManager.consumePurchasedSKU(IAP_SKU)
                 }
-
             }
             else -> Log.d(LOG_TAG, "Reason : ${errorMsg ?: "Unknown"}")
         }
