@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
             "Login"
         }
 
-        binding.subscriptionButton.onThrottledClick {
+        binding.launchDefaultCampaign.onThrottledClick {
             NamiMLManager.coreAction("subscribe")
 
             NamiCampaignManager.launch(this) { result ->
@@ -64,6 +64,23 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        binding.launchLabeledButton.onThrottledClick {
+            NamiMLManager.coreAction("subscribe")
+
+            NamiCampaignManager.launch(this, "test_label") { result ->
+                when (result) {
+                    is LaunchCampaignResult.Success -> {
+                        Log.d(LOG_TAG, "Launch Campaign Success")
+                    }
+                    is LaunchCampaignResult.Failure -> {
+                        Log.d(LOG_TAG, "Launch Campaign Error -> ${result.error}")
+                    }
+                }
+            }
+        }
+
+
     }
 
     override fun onResume() {
@@ -71,17 +88,20 @@ class MainActivity : AppCompatActivity() {
 
         Log.d(LOG_TAG, "MainActivity.kt - onResume")
 
-        // This is to register entitlement change listener during lifecycle of this activity
-        NamiEntitlementManager.registerChangeListener { activeEntitlements ->
-            Log.d(LOG_TAG, "Entitlements Change Listener triggered")
+        // This is to register entitlement state handler during lifecycle of this activity
+        // This will be activated whenever active entitlement state is fetched from the
+        // Nami service which occured automatically during the SDK lifecycle, as well as
+        // in response to any manual calls to NamiEntitlementManager.refresh()
+        NamiEntitlementManager.registerActiveEntitlementsHandler { activeEntitlements ->
+            Log.d(LOG_TAG, "Active Entitlement Handler triggered")
             logActiveEntitlements(activeEntitlements)
             handleActiveEntitlements(activeEntitlements)
         }
 
-        // This is to register purchase change listener during lifecycle of this activity
-        NamiPurchaseManager.registerPurchasesChangedListener { purchases, state, error ->
-            Log.d(LOG_TAG, "Purchases Change Listener triggered")
-            evaluateLastPurchaseEvent(purchases, state, error)
+        // This is to register purchase change handler during lifecycle of this activity
+        NamiPurchaseManager.registerPurchasesChangedHandler { purchases, purchaseState, error ->
+            Log.d(LOG_TAG, "Purchases Change Handler triggered")
+            evaluateLastPurchaseEvent(purchases, purchaseState, error)
         }
         handleActiveEntitlements(NamiEntitlementManager.active())
     }
@@ -135,7 +155,6 @@ class MainActivity : AppCompatActivity() {
                     Log.d(LOG_TAG, "Found a pending consumable! Consuming now!")
                     NamiPurchaseManager.consumePurchasedSKU(IAP_SKU)
                 }
-
             }
             else -> Log.d(LOG_TAG, "Reason : ${errorMsg ?: "Unknown"}")
         }
@@ -155,7 +174,7 @@ class MainActivity : AppCompatActivity() {
         Log.d(LOG_TAG, "Calling NamiEntitlementManager.refresh()")
         NamiEntitlementManager.refresh() { activeEntitlements ->
             if (!activeEntitlements.isNullOrEmpty()) {
-                logActiveEntitlements(activeEntitlements)
+                //logActiveEntitlements(activeEntitlements)
                 handleActiveEntitlements(activeEntitlements)
             }
         }

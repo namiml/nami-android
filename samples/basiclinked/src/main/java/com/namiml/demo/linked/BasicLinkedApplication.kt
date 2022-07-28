@@ -54,8 +54,8 @@ class BasicLinkedApplication : Application() {
             }
         }
 
-        NamiCustomerManager.registerJourneyChangeHandler { journeyState ->
-            Log.d(LOG_TAG, "Customer journey state changed:")
+        NamiCustomerManager.registerJourneyStateHandler { journeyState ->
+            Log.d(LOG_TAG, "Customer journey state:")
             Log.d(LOG_TAG, "formerSubscriber ==> ${journeyState.formerSubscriber}")
             Log.d(LOG_TAG, "inGracePeriod ==> ${journeyState.inGracePeriod}")
             Log.d(LOG_TAG, "inIntroOfferPeriod ==> ${journeyState.inIntroOfferPeriod}")

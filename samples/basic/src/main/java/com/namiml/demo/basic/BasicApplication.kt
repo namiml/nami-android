@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import com.namiml.Nami
 import com.namiml.NamiConfiguration
+
 import com.namiml.NamiLogLevel
 import com.namiml.customer.NamiCustomerManager
 import com.namiml.paywall.NamiPaywallManager
@@ -23,9 +24,8 @@ class BasicApplication : Application() {
         super.onCreate()
 
         Nami.configure(
-            NamiConfiguration.build(this, NAMI_APP_PLATFORM_ID) {
+            NamiConfiguration.build(this, "3d062066-9d3c-430e-935d-855e2c56dd8e") {
                 logLevel = NamiLogLevel.DEBUG.takeIf { BuildConfig.DEBUG } ?: NamiLogLevel.ERROR
-
                 // developmentMode = true
                 // bypassStore = true
                 // namiLanguageCode = NamiLanguageCode.EN
@@ -41,7 +41,7 @@ class BasicApplication : Application() {
             NamiCustomerManager.login(TEST_EXTERNAL_IDENTIFIER)
         }
 
-        NamiCustomerManager.registerJourneyChangeHandler { journeyState ->
+        NamiCustomerManager.registerJourneyStateHandler { journeyState ->
             Log.d(LOG_TAG, "Customer journey state:")
             Log.d(LOG_TAG, "formerSubscriber ==> ${journeyState.formerSubscriber}")
             Log.d(LOG_TAG, "inGracePeriod ==> ${journeyState.inGracePeriod}")

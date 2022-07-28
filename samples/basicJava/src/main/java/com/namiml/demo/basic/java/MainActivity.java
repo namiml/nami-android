@@ -54,14 +54,14 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         // This is to register entitlement change listener during lifecycle of this activity
-        NamiEntitlementManager.registerChangeListener(activeEntitlements -> {
+        NamiEntitlementManager.registerActiveEntitlementsHandler(activeEntitlements -> {
             Log.d(LOG_TAG, "Entitlements Change Listener triggered");
             logActiveEntitlements(activeEntitlements);
             handleActiveEntitlements(activeEntitlements);
             return Unit.INSTANCE;
         });
 
-        NamiPurchaseManager.registerPurchasesChangedListener((namiPurchases, namiPurchaseState, error) -> {
+        NamiPurchaseManager.registerPurchasesChangedHandler((namiPurchases, namiPurchaseState, error) -> {
             evaluateLastPurchaseEvent(namiPurchases, namiPurchaseState, error);
             return Unit.INSTANCE;
         });
