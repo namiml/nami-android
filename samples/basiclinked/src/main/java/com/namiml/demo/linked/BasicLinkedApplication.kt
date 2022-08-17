@@ -31,7 +31,7 @@ class BasicLinkedApplication : Application() {
             }
         )
 
-        NamiPaywallManager.registerSignInHandler { cxt, paywall ->
+        NamiPaywallManager.registerSignInHandler { cxt ->
             Toast.makeText(cxt, "Sign in clicked", Toast.LENGTH_SHORT).show()
             // Once user signs in, you may provide unique identifier that can be used to link
             // different devices to the same customer in the Nami platform.
