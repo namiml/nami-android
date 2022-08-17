@@ -234,6 +234,12 @@ class PaywallActivity : AppCompatActivity() {
                 "code=${it.billingResponseCode}"
         )
         if (it.isSuccessful) {
+            if (it.purchase != null) {
+                Log.d(
+                    LOG_TAG,
+                    "NamiPurchase: ${it.purchase}"
+                )
+            }
             finish()
         }
     }
