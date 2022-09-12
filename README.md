@@ -11,4 +11,4 @@ More information available in our documentation at:
 
 The changelog for the SDK releases can be found here:
 
-[https://github.com/namiml/nami-android/wiki/Nami-SDK-Releases](https://github.com/namiml/nami-android/wiki/Nami-SDK-Releases)
+[https://github.com/namiml/nami-android/wiki/](https://github.com/namiml/nami-android/wiki/)
