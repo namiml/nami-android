@@ -5,8 +5,8 @@ import android.util.Log
 import android.widget.Toast
 import com.namiml.Nami
 import com.namiml.NamiConfiguration
-
 import com.namiml.NamiLogLevel
+import com.namiml.customer.AccountStateAction
 import com.namiml.customer.NamiCustomerManager
 import com.namiml.paywall.NamiPaywallManager
 
@@ -24,7 +24,7 @@ class BasicApplication : Application() {
         super.onCreate()
 
         Nami.configure(
-            NamiConfiguration.build(this, "3d062066-9d3c-430e-935d-855e2c56dd8e") {
+            NamiConfiguration.build(this, NAMI_APP_PLATFORM_ID) {
                 logLevel = NamiLogLevel.DEBUG.takeIf { BuildConfig.DEBUG } ?: NamiLogLevel.ERROR
                 // developmentMode = true
                 // bypassStore = true
@@ -54,6 +54,22 @@ class BasicApplication : Application() {
 
         NamiPaywallManager.renderCustomUiHandler { _, namiPaywall, skus ->
             Log.d(LOG_TAG, "calling linked paywall")
+        }
+
+        NamiCustomerManager.registerAccountStateHandler { accountStateAction, success, error ->
+            if (success) {
+                if (accountStateAction == AccountStateAction.LOGIN) {
+                    Log.d(LOG_TAG, "User is logged in")
+                } else if (accountStateAction == AccountStateAction.LOGOUT) {
+                    Log.d(LOG_TAG, "User is logged out")
+                }
+            } else if (error != null) {
+                if (accountStateAction == AccountStateAction.LOGIN) {
+                    Log.d(LOG_TAG, "There was an error logging in. Error - $error")
+                } else if (accountStateAction == AccountStateAction.LOGOUT) {
+                    Log.d(LOG_TAG, "There was an error logging out. Error - $error")
+                }
+            }
         }
     }
 }
