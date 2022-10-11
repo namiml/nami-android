@@ -25,8 +25,6 @@ public class BasicApplication extends Application {
         NamiConfiguration.Builder builder = new NamiConfiguration
                 .Builder(this, NAMI_APP_PLATFORM_ID);
         // builder.bypassStore(true);
-        // builder.developmentMode(true);
-        // builder.namiLanguageCode(NamiLanguageCode.EN);
 
         if (BuildConfig.DEBUG) {
             builder.logLevel(NamiLogLevel.DEBUG);

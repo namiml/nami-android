@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
         // This is to register entitlement change listener during lifecycle of this activity
         NamiEntitlementManager.registerActiveEntitlementsHandler(activeEntitlements -> {
-            Log.d(LOG_TAG, "Entitlements Change Listener triggered");
+            Log.d(LOG_TAG, "Active Entitlements Listener triggered");
             logActiveEntitlements(activeEntitlements);
             handleActiveEntitlements(activeEntitlements);
             return Unit.INSTANCE;
@@ -84,14 +84,17 @@ public class MainActivity extends AppCompatActivity {
 
     // If at least one entitlement is active, then show text on UI as active
     private void handleActiveEntitlements(List<NamiEntitlement> activeEntitlements) {
-        int textResId = R.string.entitlement_status_inactivate;
-        boolean showAsActive = false;
-        if (!activeEntitlements.isEmpty()) {
-            showAsActive = true;
-            textResId = R.string.entitlement_status_active;
-        }
-        binding.subscriptionStatus.setEnabled(showAsActive);
-        binding.subscriptionStatus.setText(textResId);
+
+        this.runOnUiThread(()-> {
+            int textResId = R.string.entitlement_status_inactivate;
+            boolean showAsActive = false;
+            if (!activeEntitlements.isEmpty()) {
+                showAsActive = true;
+                textResId = R.string.entitlement_status_active;
+            }
+            binding.subscriptionStatus.setEnabled(showAsActive);
+            binding.subscriptionStatus.setText(textResId);
+        });
     }
 
     private void onSubscriptionClicked(Activity activity) {
