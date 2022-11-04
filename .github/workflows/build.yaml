@@ -1,0 +1,39 @@
+name: Build Sample Apps
+on: pull_request
+jobs:
+  build:
+    name: Build Samples
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'microsoft'
+          java-version: '11'
+
+      - name: Clean
+        run: |
+          ./gradlew clean
+
+      - name: Build Basic
+        run: |
+          ./gradlew samples:basic:bundleRelease
+
+      - name: Build Basic Linked
+        run: |
+          ./gradlew samples:basiclinked:bundleRelease
+
+#      - name: Build Basic Java
+#        run: |
+#          ./gradlew samples:basicJava:bundleRelease
+
+      - name: Build Test Nami
+        run: |
+          ./gradlew samples:testnami:bundleRelease
