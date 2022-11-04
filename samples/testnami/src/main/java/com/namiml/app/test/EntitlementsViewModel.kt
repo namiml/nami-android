@@ -1,10 +1,10 @@
 package com.namiml.app.test
 
+import androidx.lifecycle.ViewModel
 import com.namiml.entitlement.NamiEntitlement
 import com.namiml.entitlement.NamiEntitlementManager
-import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class EntitlementsViewModel : ViewModel() {
 

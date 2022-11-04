@@ -4,31 +4,31 @@ import android.app.Activity
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.runtime.*
 import com.namiml.app.test.ui.theme.DarkGrey
+import com.namiml.billing.NamiPurchaseState
 import com.namiml.campaign.LaunchCampaignResult
 import com.namiml.campaign.NamiCampaignManager
 import com.namiml.paywall.model.NamiPaywallAction
-import com.namiml.billing.NamiPurchaseState
 
 data class CampaignHeader(
     var group: Number,
@@ -141,7 +141,6 @@ fun CampaignRow(campaign: CampaignItem) {
             .focusable(),
         onClick = {
             if (campaign.type == "default") {
-
                 NamiCampaignManager.launch(activity, paywallActionCallback = { action, skuId ->
                     when (action) {
                         NamiPaywallAction.NAMI_BUY_SKU -> {
@@ -281,7 +280,6 @@ fun CampaignsListTV() {
 
 @Composable
 fun CampaignView(leanback: Boolean) {
-
     if (leanback) {
         CampaignsListTV()
     } else {

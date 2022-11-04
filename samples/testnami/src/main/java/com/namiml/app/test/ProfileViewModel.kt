@@ -1,13 +1,13 @@
 package com.namiml.app.test
 
-import com.namiml.customer.NamiCustomerManager
-import androidx.lifecycle.ViewModel
-import androidx.compose.runtime.mutableStateOf
-import com.namiml.customer.CustomerJourneyState
-import com.namiml.customer.AccountStateAction
 import android.util.Log
-import kotlinx.coroutines.flow.StateFlow
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import com.namiml.customer.AccountStateAction
+import com.namiml.customer.CustomerJourneyState
+import com.namiml.customer.NamiCustomerManager
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class ProfileViewModel : ViewModel() {
 
