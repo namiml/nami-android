@@ -53,13 +53,18 @@ class MainActivity : AppCompatActivity() {
         binding.launchDefaultCampaign.onThrottledClick {
             NamiMLManager.coreAction("subscribe")
 
-            NamiCampaignManager.launch(this) { result ->
+            NamiCampaignManager.launch(this, paywallActionCallback = { action, skuId ->
+                Log.d(LOG_TAG, "New Paywall Action $action with ${skuId.orEmpty()}")
+            }) { result ->
                 when (result) {
                     is LaunchCampaignResult.Success -> {
                         Log.d(LOG_TAG, "Launch Campaign Success")
                     }
                     is LaunchCampaignResult.Failure -> {
                         Log.d(LOG_TAG, "Launch Campaign Error -> ${result.error}")
+                    }
+                    is LaunchCampaignResult.PurchaseChanged -> {
+                        Log.d(LOG_TAG, "Purchase changed -> ${result.purchaseState}")
                     }
                 }
             }
@@ -68,7 +73,13 @@ class MainActivity : AppCompatActivity() {
         binding.launchLabeledButton.onThrottledClick {
             NamiMLManager.coreAction("subscribe")
 
-            NamiCampaignManager.launch(this, "test_label") { result ->
+            NamiCampaignManager.launch(
+                this,
+                "test_label",
+                paywallActionCallback = { action, skuId ->
+                    Log.d(LOG_TAG, "New Paywall Action $action with ${skuId.orEmpty()}")
+                }
+            ) { result ->
                 when (result) {
                     is LaunchCampaignResult.Success -> {
                         Log.d(LOG_TAG, "Launch Campaign Success")
@@ -76,11 +87,12 @@ class MainActivity : AppCompatActivity() {
                     is LaunchCampaignResult.Failure -> {
                         Log.d(LOG_TAG, "Launch Campaign Error -> ${result.error}")
                     }
+                    is LaunchCampaignResult.PurchaseChanged -> {
+                        Log.d(LOG_TAG, "Purchase changed -> ${result.purchaseState}")
+                    }
                 }
             }
         }
-
-
     }
 
     override fun onResume() {
@@ -174,7 +186,7 @@ class MainActivity : AppCompatActivity() {
         Log.d(LOG_TAG, "Calling NamiEntitlementManager.refresh()")
         NamiEntitlementManager.refresh() { activeEntitlements ->
             if (!activeEntitlements.isNullOrEmpty()) {
-                //logActiveEntitlements(activeEntitlements)
+                // logActiveEntitlements(activeEntitlements)
                 handleActiveEntitlements(activeEntitlements)
             }
         }

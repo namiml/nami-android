@@ -37,7 +37,7 @@ class PaywallActivity : AppCompatActivity() {
         fun getIntent(
             context: Context,
             namiPaywall: NamiPaywall,
-            skus: List<NamiSKU>?,
+            skus: List<NamiSKU>?
         ): Intent {
             this.namiPaywall = namiPaywall
             this.skus = skus
