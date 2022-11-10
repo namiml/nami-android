@@ -14,21 +14,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Consumer;
 
-import com.namiml.NamiFailureHandler;
-import com.namiml.NamiResultCallback;
-import com.namiml.NamiSuccessHandler;
 import com.namiml.billing.NamiPurchase;
 import com.namiml.billing.NamiPurchaseManager;
 import com.namiml.billing.NamiPurchaseState;
 import com.namiml.campaign.NamiCampaignManager;
-import com.namiml.customer.NamiCustomerManager;
 import com.namiml.demo.basic.java.databinding.ActivityMainBinding;
 import com.namiml.entitlement.NamiEntitlement;
 import com.namiml.entitlement.NamiEntitlementManager;
 import com.namiml.ml.NamiMLManager;
 import com.namiml.paywall.NamiPaywallManager;
-import com.namiml.paywall.PreparePaywallError;
-import com.namiml.paywall.PreparePaywallResult;
 
 import java.util.List;
 
@@ -100,13 +94,28 @@ public class MainActivity extends AppCompatActivity {
     private void onSubscriptionClicked(Activity activity) {
         NamiMLManager.coreAction("subscribe");
 
-        NamiCampaignManager.launch(this,"", (launchCampaignResult -> {
+        NamiCampaignManager.launch(this,"", ((action, skuId )  -> {
+            Log.d(LOG_TAG, "New Paywall Action " + action +" with sku :" + skuId);
+            return Unit.INSTANCE;
+        }), (launchCampaignResult -> {
             launchCampaignResult.onSuccessOrElse(
-                    () -> {
-                        Log.d(LOG_TAG, "Launch Campaign Success");
-                    }, error -> {
-                        Log.d(LOG_TAG, "Launch Campaign Error -> " + error);
+                    () -> Log.d(LOG_TAG, "Launch Campaign Success"),
+                    error -> Log.d(LOG_TAG, "Launch Campaign Error -> " + error),
+                    (activePurchases, purchaseState, error) -> {
+                        Log.d(LOG_TAG, "Purchase changed -> " + purchaseState);
+
+                        switch (purchaseState){
+                            case PURCHASED:
+                                Log.d(LOG_TAG, "Purchased! -> " + activePurchases);
+                                break;
+                            case CANCELLED:
+                                Log.d(LOG_TAG, "Cancelled Purchase Flow! -> " + activePurchases);
+                                break;
+                            default:
+                                break;
+                        }
                     }
+
             );
             return Unit.INSTANCE;
         }));
