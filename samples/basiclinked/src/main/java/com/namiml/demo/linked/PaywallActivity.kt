@@ -205,12 +205,12 @@ class PaywallActivity : AppCompatActivity() {
         val skuId = namiSKU.skuId
         binding.apply {
             with(skuDescription) {
-                text = namiSKU.skuDetails.description
+                text = namiSKU.skuDetails?.description
                 styleData?.skuButtonTextColor?.let { textColor ->
                     setTextColor(Color.parseColor(textColor))
                 }
             }
-            skuPrice.text = namiSKU.skuDetails.price
+            skuPrice.text = namiSKU.skuDetails?.price
             if (allPurchases.any { it.skuId == skuId && it.skuId != IAP_SKU }) {
                 skuActiveIndicator.visibility = View.VISIBLE
             }
