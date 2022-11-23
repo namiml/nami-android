@@ -14,19 +14,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Consumer;
 
-import com.namiml.NamiFailureHandler;
-import com.namiml.NamiResultCallback;
-import com.namiml.NamiSuccessHandler;
 import com.namiml.billing.NamiPurchase;
 import com.namiml.billing.NamiPurchaseManager;
 import com.namiml.billing.NamiPurchaseState;
+import com.namiml.campaign.NamiCampaignManager;
 import com.namiml.demo.basic.java.databinding.ActivityMainBinding;
 import com.namiml.entitlement.NamiEntitlement;
 import com.namiml.entitlement.NamiEntitlementManager;
 import com.namiml.ml.NamiMLManager;
 import com.namiml.paywall.NamiPaywallManager;
-import com.namiml.paywall.PreparePaywallError;
-import com.namiml.paywall.PreparePaywallResult;
 
 import java.util.List;
 
@@ -52,20 +48,20 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         // This is to register entitlement change listener during lifecycle of this activity
-        NamiEntitlementManager.registerEntitlementChangeListener(activeEntitlements -> {
-            Log.d(LOG_TAG, "Entitlements Change Listener triggered");
+        NamiEntitlementManager.registerActiveEntitlementsHandler(activeEntitlements -> {
+            Log.d(LOG_TAG, "Active Entitlements Listener triggered");
             logActiveEntitlements(activeEntitlements);
             handleActiveEntitlements(activeEntitlements);
             return Unit.INSTANCE;
         });
 
-        NamiPurchaseManager.registerPurchasesChangedListener((namiPurchases, namiPurchaseState, error) -> {
+        NamiPurchaseManager.registerPurchasesChangedHandler((namiPurchases, namiPurchaseState, error) -> {
             evaluateLastPurchaseEvent(namiPurchases, namiPurchaseState, error);
             return Unit.INSTANCE;
         });
 
         // This is to check for active entitlements on app resume to take any action if you want
-        handleActiveEntitlements(NamiEntitlementManager.activeEntitlements());
+        handleActiveEntitlements(NamiEntitlementManager.active());
     }
 
     private void logActiveEntitlements(@NonNull List<NamiEntitlement> activeEntitlements) {
@@ -82,34 +78,47 @@ public class MainActivity extends AppCompatActivity {
 
     // If at least one entitlement is active, then show text on UI as active
     private void handleActiveEntitlements(List<NamiEntitlement> activeEntitlements) {
-        int textResId = R.string.entitlement_status_inactivate;
-        boolean showAsActive = false;
-        if (!activeEntitlements.isEmpty()) {
-            showAsActive = true;
-            textResId = R.string.entitlement_status_active;
-        }
-        binding.subscriptionStatus.setEnabled(showAsActive);
-        binding.subscriptionStatus.setText(textResId);
+
+        this.runOnUiThread(()-> {
+            int textResId = R.string.entitlement_status_inactivate;
+            boolean showAsActive = false;
+            if (!activeEntitlements.isEmpty()) {
+                showAsActive = true;
+                textResId = R.string.entitlement_status_active;
+            }
+            binding.subscriptionStatus.setEnabled(showAsActive);
+            binding.subscriptionStatus.setText(textResId);
+        });
     }
 
     private void onSubscriptionClicked(Activity activity) {
         NamiMLManager.coreAction("subscribe");
-        NamiPaywallManager.preparePaywallForDisplay(new NamiResultCallback<PreparePaywallResult>() {
-            @Override
-            public void invoke(PreparePaywallResult result) {
-                result.onSuccessOrElse(new NamiSuccessHandler() {
-                    @Override
-                    public void invoke() {
-                        NamiPaywallManager.raisePaywall(activity);
+
+        NamiCampaignManager.launch(this,"", ((action, skuId )  -> {
+            Log.d(LOG_TAG, "New Paywall Action " + action +" with sku :" + skuId);
+            return Unit.INSTANCE;
+        }), (launchCampaignResult -> {
+            launchCampaignResult.onSuccessOrElse(
+                    () -> Log.d(LOG_TAG, "Launch Campaign Success"),
+                    error -> Log.d(LOG_TAG, "Launch Campaign Error -> " + error),
+                    (activePurchases, purchaseState, error) -> {
+                        Log.d(LOG_TAG, "Purchase changed -> " + purchaseState);
+
+                        switch (purchaseState){
+                            case PURCHASED:
+                                Log.d(LOG_TAG, "Purchased! -> " + activePurchases);
+                                break;
+                            case CANCELLED:
+                                Log.d(LOG_TAG, "Cancelled Purchase Flow! -> " + activePurchases);
+                                break;
+                            default:
+                                break;
+                        }
                     }
-                }, new NamiFailureHandler<PreparePaywallError>() {
-                    @Override
-                    public void invoke(@NonNull PreparePaywallError error) {
-                        Log.d("TAG", "preparePaywallForDisplay Error -> " + error);
-                    }
-                });
-            }
-        });
+
+            );
+            return Unit.INSTANCE;
+        }));
     }
 
     private void evaluateLastPurchaseEvent(

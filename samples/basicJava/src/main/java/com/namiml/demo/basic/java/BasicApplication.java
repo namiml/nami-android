@@ -6,7 +6,6 @@ import android.widget.Toast;
 
 import com.namiml.Nami;
 import com.namiml.NamiConfiguration;
-import com.namiml.NamiExternalIdentifierType;
 // import com.namiml.NamiLanguageCode;
 import com.namiml.NamiLogLevel;
 import com.namiml.customer.NamiCustomerManager;
@@ -16,7 +15,6 @@ import kotlin.Unit;
 
 public class BasicApplication extends Application {
 
-    public boolean allowAutoRaisingPaywall = true;
     public static final String LOG_TAG = "DemoBasicJava";
     private static final String TEST_EXTERNAL_IDENTIFIER = "9a9999a9-99aa-99a9-aa99-999a999999a9";
     private static final String NAMI_APP_PLATFORM_ID = "3d062066-9d3c-430e-935d-855e2c56dd8e";
@@ -27,8 +25,6 @@ public class BasicApplication extends Application {
         NamiConfiguration.Builder builder = new NamiConfiguration
                 .Builder(this, NAMI_APP_PLATFORM_ID);
         // builder.bypassStore(true);
-        // builder.developmentMode(true);
-        // builder.namiLanguageCode(NamiLanguageCode.EN);
 
         if (BuildConfig.DEBUG) {
             builder.logLevel(NamiLogLevel.DEBUG);
@@ -36,17 +32,17 @@ public class BasicApplication extends Application {
 
         Nami.configure(builder.build());
 
-        NamiPaywallManager.registerSignInListener((context, namiPaywall, uuid) -> {
+        NamiPaywallManager.registerSignInHandler((context) -> {
             Toast.makeText(context, "Sign in clicked!", Toast.LENGTH_SHORT).show();
             // Once user signs in, you may provide unique identifier that can be used to link
             // different devices to the same customer in the Nami platform.
             // Here at this stage, since we don't have real sign in flow in this demo app, we're
             // just setting this test identifier when the sign-in button is pressed on paywall
-            Nami.setExternalIdentifier(TEST_EXTERNAL_IDENTIFIER, NamiExternalIdentifierType.UUID);
+            NamiCustomerManager.login(TEST_EXTERNAL_IDENTIFIER);
             return Unit.INSTANCE;
         });
 
-        NamiCustomerManager.registerCustomerJourneyChangedListener((journeyState) -> {
+        NamiCustomerManager.registerJourneyStateHandler((journeyState) -> {
             Log.d(LOG_TAG, "Customer journey state changed:");
             Log.d(LOG_TAG, "formerSubscriber ==>" + journeyState.formerSubscriber);
             Log.d(LOG_TAG, "inGracePeriod ==> " + journeyState.inGracePeriod);
@@ -58,8 +54,5 @@ public class BasicApplication extends Application {
             return Unit.INSTANCE;
         });
 
-
-        NamiPaywallManager.registerApplicationAutoRaisePaywallBlocker(
-                () -> allowAutoRaisingPaywall);
     }
 }

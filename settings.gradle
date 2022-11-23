@@ -1,3 +1,4 @@
 include ':samples:basiclinked'
 include ':samples:basic'
 include ':samples:basicJava'
+include ':samples:testnami'

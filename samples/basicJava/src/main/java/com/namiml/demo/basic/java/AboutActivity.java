@@ -31,14 +31,12 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        ((BasicApplication) getApplication()).allowAutoRaisingPaywall = false;
         NamiMLManager.enterCoreContent(CORE_CONTENT_LABEL);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        ((BasicApplication) getApplication()).allowAutoRaisingPaywall = true;
         NamiMLManager.exitCoreContent(CORE_CONTENT_LABEL);
     }
 }

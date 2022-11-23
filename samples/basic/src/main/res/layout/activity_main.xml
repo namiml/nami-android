@@ -11,6 +11,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <Button
+            android:id="@+id/loginLogoutButton"
+            android:layout_width="88dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/logout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/refreshButton" />
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             style="@style/Widget.AppCompat.Toolbar"
@@ -28,38 +38,38 @@
 
         <TextView
             android:id="@+id/header_app_name"
-            style="@style/TextAppearance.AppCompat.Headline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/baseline_2x"
             android:text="@string/app_name"
-            android:textStyle="italic"
+            android:layout_marginTop="@dimen/baseline_2x"
+            style="@style/TextAppearance.AppCompat.Headline"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+            android:textStyle="italic"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <Button
             android:id="@+id/about_button"
             style="@style/TextAppearance.AppCompat.Widget.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/baseline_2x"
             android:text="@string/go_to_about"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/colorPrimaryDark"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/header_app_name" />
+            app:layout_constraintTop_toBottomOf="@+id/loginLogoutButton" />
 
         <TextView
             android:id="@+id/header_intro"
             style="@style/AppTheme.Header"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/baseline_6x"
+            android:layout_marginTop="16dp"
             android:text="@string/header_introduction"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/about_button" />
+            app:layout_constraintTop_toBottomOf="@+id/header_app_name" />
 
         <TextView
             android:id="@+id/body_intro"
@@ -67,41 +77,22 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/body_introduction"
+            android:textColor="@color/colorPrimaryDark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/header_intro" />
-
-        <TextView
-            android:id="@+id/header_instruction"
-            style="@style/AppTheme.Header"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/baseline_4x"
-            android:text="@string/header_instructions"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/body_intro" />
-
-        <TextView
-            android:id="@+id/body_instruction"
-            style="@style/AppTheme.Body"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/body_instruction"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/header_instruction" />
 
         <TextView
             android:id="@+id/header_info"
             style="@style/AppTheme.Header"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/baseline_4x"
+            android:layout_marginTop="16dp"
             android:text="@string/header_info"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/body_instruction" />
+            app:layout_constraintTop_toBottomOf="@+id/body_intro" />
 
         <TextView
             android:id="@+id/body_info"
@@ -109,6 +100,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/body_info"
+            android:textColor="@color/colorPrimaryDark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/header_info" />
@@ -118,14 +110,15 @@
             style="@style/AppTheme.Header.6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="@dimen/baseline_4x"
             android:text="@string/entitlement_status_label"
-            app:layout_constraintBottom_toTopOf="@id/subscription_button"
+            app:layout_constraintBottom_toTopOf="@id/launch_labeled_button"
             app:layout_constraintEnd_toStartOf="@+id/subscription_status"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/body_info"
-            app:layout_constraintVertical_bias="1" />
+            app:layout_constraintVertical_bias="0.253" />
 
         <TextView
             android:id="@+id/subscription_status"
@@ -141,17 +134,40 @@
             tools:text="@string/entitlement_status_inactivate" />
 
         <Button
-            android:id="@+id/subscription_button"
+            android:id="@+id/launch_labeled_button"
             style="@style/TextAppearance.AppCompat.Widget.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/baseline_4x"
-            android:layout_marginBottom="@dimen/baseline_18x"
-            android:text="@string/subscribe"
+            android:layout_marginTop="16dp"
+            android:text="@string/launch_labeled_campaign"
             android:textColor="@color/colorPrimary"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/launch_default_campaign" />
+
+        <Button
+            android:id="@+id/launch_default_campaign"
+            style="@style/TextAppearance.AppCompat.Widget.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/launch_default_campaign"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/subscription_status" />
+
+        <Button
+            android:id="@+id/refreshButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/refresh"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/launch_labeled_button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
