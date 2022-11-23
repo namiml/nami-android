@@ -62,10 +62,7 @@ val campaignItems = listOf(
     CampaignItem(2, "Starfish", "label", "starfish"),
     CampaignItem(2, "Mantis", "label", "mantis"),
     CampaignItem(2, "Venice", "label", "venice"),
-    CampaignItem(3, "HER", "label", "her"),
-    CampaignItem(3, "PureVPN", "label", "purevpn"),
     CampaignItem(3, "Living Room", "label", "livingroom"),
-    CampaignItem(3, "WonderyTV", "label", "wonderytv"),
     CampaignItem(4, "Legacy", "label", "classic")
 // CampaignItem(3, "Linked Paywall", "label", "linked")
 )

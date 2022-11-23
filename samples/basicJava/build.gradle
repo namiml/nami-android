@@ -31,6 +31,10 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "androidx.appcompat:appcompat:1.4.0"
+    implementation "androidx.constraintlayout:constraintlayout:2.1.3"
+
+
     implementation "com.namiml:sdk-android:$nami_sdk_version"
 }
 
