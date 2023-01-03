@@ -28,7 +28,7 @@ jobs:
 
       - name: Build Basic Linked
         run: |
-          ./gradlew samples:basiclinked:bundleRelease
+          ./gradlew samples:basicLinked:bundleRelease
 
       - name: Build Basic Java
         run: |
