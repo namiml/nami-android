@@ -138,6 +138,7 @@ fun CampaignRow(campaign: CampaignItem) {
             .focusable(),
         onClick = {
             if (campaign.type == "default") {
+
                 NamiCampaignManager.launch(activity, paywallActionCallback = { action, skuId ->
                     when (action) {
                         NamiPaywallAction.NAMI_BUY_SKU -> {
