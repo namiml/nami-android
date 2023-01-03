@@ -36,7 +36,7 @@ class WebViewActivity : AppCompatActivity() {
         binding.webViewToolbar.apply {
             setNavigationIcon(R.drawable.ic_arrow_back)
             setNavigationOnClickListener {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
             }
         }
         intent?.let {

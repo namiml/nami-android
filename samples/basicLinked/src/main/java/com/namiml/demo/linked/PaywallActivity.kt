@@ -69,7 +69,7 @@ class PaywallActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (allowBackPress) {
-            super.onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
         }
     }
 

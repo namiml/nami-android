@@ -26,7 +26,7 @@ class AboutActivity : AppCompatActivity() {
         binding.toolbar.apply {
             setNavigationIcon(R.drawable.ic_arrow_back)
             setNavigationOnClickListener {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
             }
         }
     }
