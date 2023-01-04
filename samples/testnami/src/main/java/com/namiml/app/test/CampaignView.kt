@@ -4,32 +4,32 @@ import android.app.Activity
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.runtime.*
 import com.namiml.app.test.ui.theme.DarkGrey
+import com.namiml.billing.NamiPurchaseState
 import com.namiml.campaign.LaunchCampaignResult
 import com.namiml.campaign.NamiCampaignManager
 import com.namiml.paywall.model.NamiPaywallAction
-import com.namiml.billing.NamiPurchaseState
 
 data class CampaignHeader(
     var group: Number,
@@ -56,15 +56,16 @@ fun getHeader(headerGroup: Number): CampaignHeader {
 
 val campaignItems = listOf(
     CampaignItem(1, "Default", "default", ""),
+// CampaignItem(1,"Custom label...", "label", ""),
     CampaignItem(2, "Penguin", "label", "penguin"),
     CampaignItem(2, "Pacific", "label", "pacific"),
     CampaignItem(2, "Trident", "label", "trident"),
     CampaignItem(2, "Starfish", "label", "starfish"),
     CampaignItem(2, "Mantis", "label", "mantis"),
     CampaignItem(2, "Venice", "label", "venice"),
-    CampaignItem(3, "Brighton", "label", "brighton"),
     CampaignItem(3, "Living Room", "label", "livingroom"),
     CampaignItem(4, "Legacy", "label", "classic")
+// CampaignItem(3, "Linked Paywall", "label", "linked")
 )
 
 @Composable
@@ -221,7 +222,7 @@ fun CampaignRow(campaign: CampaignItem) {
                             if (result.purchaseState == NamiPurchaseState.PURCHASED) {
                                 Log.d(LOG_TAG, "Purchased! -> ${result.activePurchases}")
                             }
-                            if (result.purchaseState == NamiPurchaseState.CANCELLED) {
+                            else if (result.purchaseState == NamiPurchaseState.CANCELLED) {
                                 Log.d(
                                     LOG_TAG,
                                     "Cancelled Purchase Flow! -> ${result.activePurchases}"
@@ -278,7 +279,6 @@ fun CampaignsListTV() {
 
 @Composable
 fun CampaignView(leanback: Boolean) {
-
     if (leanback) {
         CampaignsListTV()
     } else {
