@@ -6,10 +6,9 @@ import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
@@ -139,7 +138,6 @@ fun CampaignRow(campaign: CampaignItem) {
             .focusable(),
         onClick = {
             if (campaign.type == "default") {
-
                 NamiCampaignManager.launch(activity, paywallActionCallback = { action, skuId ->
                     when (action) {
                         NamiPaywallAction.NAMI_BUY_SKU -> {
@@ -222,7 +220,7 @@ fun CampaignRow(campaign: CampaignItem) {
                             if (result.purchaseState == NamiPurchaseState.PURCHASED) {
                                 Log.d(LOG_TAG, "Purchased! -> ${result.activePurchases}")
                             }
-                            else if (result.purchaseState == NamiPurchaseState.CANCELLED) {
+                            if (result.purchaseState == NamiPurchaseState.CANCELLED) {
                                 Log.d(
                                     LOG_TAG,
                                     "Cancelled Purchase Flow! -> ${result.activePurchases}"
@@ -268,7 +266,7 @@ fun CampaignsListTV() {
 
     LazyVerticalGrid(
         modifier = Modifier.padding(top = 60.dp),
-        columns = GridCells.Adaptive(200.dp),
+        cells = GridCells.Adaptive(200.dp),
         contentPadding = PaddingValues(8.dp)
     ) {
         items(campaignItems) { campaign ->

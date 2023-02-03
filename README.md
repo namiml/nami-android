@@ -18,7 +18,7 @@ Get started by heading over to our [quick start guide](https://docs.namiml.com/d
 
 ### Requirements
 - Android SDK minimum version 26
-- SDK builds target Android 13 (API version 33)
+- SDK builds target Android 12 (API version 31)
 - SDK has been built with Java v8 and Kotlin v1.6.10
 
 ### Add Maven repostiory
