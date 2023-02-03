@@ -17,7 +17,8 @@ Get started by heading over to our [quick start guide](https://docs.namiml.com/d
 ## Getting the Nami Framework
 
 ### Requirements
-- Android SDK minimum version 26
+- Android SDK minimum version 22
+- SDK builds target Android 13 (API version 33)
 - SDK builds target Android 12 (API version 31)
 - SDK has been built with Java v8 and Kotlin v1.6.10
 
@@ -36,7 +37,7 @@ allprojects {
 ### Add Nami SDK dependency
 
 dependencies {
-  implementation "com.namiml:sdk-android:3.0.3"
+  implementation "com.namiml:sdk-android:3.0.5"
 }
 
 ### Add Java 8 compatibility
