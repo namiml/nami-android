@@ -1,0 +1,36 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="PaywallTheme" parent="AppTheme">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="AppTheme.Header" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:paddingStart">@dimen/baseline_4x</item>
+        <item name="android:paddingEnd">@dimen/baseline_4x</item>
+    </style>
+
+    <style name="AppTheme.Body" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:paddingStart">@dimen/baseline_4x</item>
+        <item name="android:paddingEnd">@dimen/baseline_4x</item>
+        <item name="android:textColor">@color/textColorSecondary</item>
+    </style>
+
+    <style name="Paywall.Button" parent="@style/Widget.MaterialComponents.Button">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+</resources>

@@ -36,7 +36,7 @@ allprojects {
 ### Add Nami SDK dependency
 
 dependencies {
-  implementation "com.namiml:sdk-android:3.0.0-alpha.07"
+  implementation "com.namiml:sdk-android:3.0.3"
 }
 
 ### Add Java 8 compatibility
@@ -65,7 +65,7 @@ We recommend that you configure the Nami SDK as early in your app's launch as po
 
 The best spot to do this is in the onCreate() method in your class that creates your Application and inherits from Application(). Here's a full code example.
 
-You can find the Nami App Platform ID under the Nami Control Center's [Integrations > Apple App Store](https://app.namiml.com/integrations/) section.
+You can find the Nami App Platform ID under the Nami Control Center's [Integrations > Google Play](https://app.namiml.com/integrations/) section.
 
 ```kotlin
 import com.namiml.Nami

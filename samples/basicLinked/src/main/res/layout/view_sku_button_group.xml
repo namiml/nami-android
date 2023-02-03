@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:cardCornerRadius="@dimen/baseline_2x"
+    app:cardElevation="@dimen/baseline">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/sku_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:background="#ACCD84">
+
+        <TextView
+            android:id="@+id/sku_active_indicator"
+            android:layout_width="0dp"
+            android:layout_height="16dp"
+            android:background="#4D000000"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:letterSpacing="0.2"
+            android:paddingHorizontal="@dimen/baseline"
+            android:text="@string/active"
+            android:textAllCaps="true"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/sku_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/baseline"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/sku_price"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sku_active_indicator"
+            tools:text="Quarterly Pass" />
+
+        <TextView
+            android:id="@+id/sku_featured_indicator"
+            android:layout_width="0dp"
+            android:layout_height="16dp"
+            android:background="#4D000000"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:letterSpacing="0.2"
+            android:paddingHorizontal="@dimen/baseline"
+            android:text="@string/featured"
+            android:textAllCaps="true"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintBottom_toTopOf="@id/sku_price"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/sku_price"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:background="#4D000000"
+            android:fontFamily="serif-monospace"
+            android:gravity="center"
+            android:padding="@dimen/baseline"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="$999.99" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>
