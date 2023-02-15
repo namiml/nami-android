@@ -53,8 +53,8 @@ class MainActivity : AppCompatActivity() {
         binding.launchDefaultCampaign.onThrottledClick {
             NamiMLManager.coreAction("subscribe")
 
-            NamiCampaignManager.launch(this, paywallActionCallback = { action, skuId ->
-                Log.d(LOG_TAG, "New Paywall Action $action with ${skuId.orEmpty()}")
+            NamiCampaignManager.launch(this, paywallActionCallback = { action, sku ->
+                Log.d(LOG_TAG, "New Paywall Action $action with ${sku?.skuId.orEmpty()}")
             }) { result ->
                 when (result) {
                     is LaunchCampaignResult.Success -> {
@@ -73,13 +73,11 @@ class MainActivity : AppCompatActivity() {
         binding.launchLabeledButton.onThrottledClick {
             NamiMLManager.coreAction("subscribe")
 
-            NamiCampaignManager.launch(
-                this,
+            NamiCampaignManager.launch(this,
                 "test_label",
-                paywallActionCallback = { action, skuId ->
-                    Log.d(LOG_TAG, "New Paywall Action $action with ${skuId.orEmpty()}")
-                }
-            ) { result ->
+                paywallActionCallback = { action, sku ->
+                    Log.d(LOG_TAG, "New Paywall Action $action with ${sku?.skuId.orEmpty()}")
+                }) { result ->
                 when (result) {
                     is LaunchCampaignResult.Success -> {
                         Log.d(LOG_TAG, "Launch Campaign Success")

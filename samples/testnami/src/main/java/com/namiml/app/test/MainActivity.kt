@@ -3,6 +3,7 @@ package com.namiml.app.test
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -10,6 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -25,6 +29,9 @@ import com.namiml.Nami
 import com.namiml.NamiConfiguration
 import com.namiml.NamiLogLevel
 import com.namiml.app.test.ui.theme.TestNamiTheme
+import com.namiml.campaign.NamiCampaign
+import com.namiml.campaign.NamiCampaignManager
+import com.namiml.campaign.NamiCampaignRuleType
 
 const val LOG_TAG = "TestNami"
 
@@ -46,6 +53,9 @@ private class SimpleFactory<VM : ViewModel>(
 }
 
 class MainActivity : ComponentActivity() {
+
+    private var campaigns by mutableStateOf<List<NamiCampaign>>(listOf())
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,7 +63,7 @@ class MainActivity : ComponentActivity() {
         requestedOrientation =
             if (isTelevision) ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE else ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-        val appPlatformId = BuildConfig.APP_PLATFORM_ID
+        var appPlatformId = BuildConfig.APP_PLATFORM_ID
 
         Nami.configure(
             NamiConfiguration.build(this, appPlatformId) {
@@ -61,6 +71,11 @@ class MainActivity : ComponentActivity() {
                 if (BuildConfig.NAMI_ENV_PROD == false) {
                     settingsList = listOf("useStagingAPI")
                 }
+//                namiLanguageCode = NamiLanguageCode.DE
+//                namiLanguageCode = NamiLanguageCode.EN
+//                namiLanguageCode = NamiLanguageCode.ES
+//                namiLanguageCode = NamiLanguageCode.FR
+//                namiLanguageCode = NamiLanguageCode.JA
             }
         )
 
@@ -76,15 +91,31 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    TestApp(isTelevision)
+                    TestApp(isTelevision, campaigns)
                 }
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        campaigns = NamiCampaignManager.allCampaigns()
+
+        NamiCampaignManager.registerAvailableCampaignsHandler {
+            campaigns = it
+        }
+
+//        if (NamiCampaignManager.isCampaignAvailable("penguin")) {
+//            Log.d("CAMPAIGN", "We have a live penguin")
+//        }
+//        if (NamiCampaignManager.isCampaignAvailable()) {
+//            Log.d("CAMPAIGN", "We have a live default campaign")
+//        }
+    }
 }
 
 @Composable
-fun TestApp(leanback: Boolean) {
+fun TestApp(leanback: Boolean, campaigns: List<NamiCampaign>) {
     val navController = rememberNavController()
 
     Scaffold(
@@ -106,7 +137,7 @@ fun TestApp(leanback: Boolean) {
         bottomBar = { BottomNavigationBar(navController, leanback) },
         content = { padding ->
             Box(modifier = Modifier.padding(padding)) {
-                Navigation(navController = navController, leanback = leanback)
+                Navigation(navController = navController, leanback = leanback, campaigns = campaigns)
             }
         },
         backgroundColor = MaterialTheme.colors.background // Set background color to avoid the white flashing when you switch between screens
@@ -114,10 +145,10 @@ fun TestApp(leanback: Boolean) {
 }
 
 @Composable
-fun Navigation(navController: NavHostController, leanback: Boolean) {
+fun Navigation(navController: NavHostController, leanback: Boolean, campaigns: List<NamiCampaign>) {
     NavHost(navController, startDestination = NavigationItem.Campaigns.route) {
         composable(NavigationItem.Campaigns.route) {
-            CampaignView(leanback)
+            CampaignView(leanback, campaigns)
         }
         composable(NavigationItem.Profile.route) {
             ProfileView(leanback)
@@ -132,6 +163,6 @@ fun Navigation(navController: NavHostController, leanback: Boolean) {
 @Composable
 fun DefaultPreview() {
     TestNamiTheme {
-        TestApp(leanback = false)
+        TestApp(leanback = false, listOf())
     }
 }

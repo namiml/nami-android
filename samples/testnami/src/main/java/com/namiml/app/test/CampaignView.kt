@@ -11,9 +11,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,7 +26,9 @@ import androidx.compose.ui.unit.sp
 import com.namiml.app.test.ui.theme.DarkGrey
 import com.namiml.billing.NamiPurchaseState
 import com.namiml.campaign.LaunchCampaignResult
+import com.namiml.campaign.NamiCampaign
 import com.namiml.campaign.NamiCampaignManager
+import com.namiml.campaign.NamiCampaignRuleType
 import com.namiml.paywall.model.NamiPaywallAction
 
 data class CampaignHeader(
@@ -44,29 +44,13 @@ data class CampaignItem(
 )
 
 val headers = listOf(
-    CampaignHeader(1, "Basic"),
-    CampaignHeader(2, "Templates"),
-    CampaignHeader(3, "Branded"),
-    CampaignHeader(4, "Other")
+    CampaignHeader(1, "Live Unlabeled Campaign"),
+    CampaignHeader(2, "Live Labeled Campaign")
 )
 
 fun getHeader(headerGroup: Number): CampaignHeader {
     return headers.first { it.group.equals(headerGroup) }
 }
-
-val campaignItems = listOf(
-    CampaignItem(1, "Default", "default", ""),
-// CampaignItem(1,"Custom label...", "label", ""),
-    CampaignItem(2, "Penguin", "label", "penguin"),
-    CampaignItem(2, "Pacific", "label", "pacific"),
-    CampaignItem(2, "Trident", "label", "trident"),
-    CampaignItem(2, "Starfish", "label", "starfish"),
-    CampaignItem(2, "Mantis", "label", "mantis"),
-    CampaignItem(2, "Venice", "label", "venice"),
-    CampaignItem(3, "Living Room", "label", "livingroom"),
-    CampaignItem(4, "Legacy", "label", "classic")
-// CampaignItem(3, "Linked Paywall", "label", "linked")
-)
 
 @Composable
 fun CampaignTitleText(text: String) {
@@ -139,14 +123,17 @@ fun CampaignRow(campaign: CampaignItem) {
             .focusable(),
         onClick = {
             if (campaign.type == "default") {
-
-                NamiCampaignManager.launch(activity, paywallActionCallback = { action, skuId ->
+                NamiCampaignManager.launch(activity, paywallActionCallback = { action, sku ->
                     when (action) {
                         NamiPaywallAction.NAMI_BUY_SKU -> {
-                            Log.d(LOG_TAG, "Buy SKU - ${skuId.orEmpty()}")
+                            Log.d(LOG_TAG, "Buy SKU - ${sku?.skuId.orEmpty()}")
                         }
                         NamiPaywallAction.NAMI_SELECT_SKU -> {
-                            Log.d(LOG_TAG, "Select SKU - ${skuId.orEmpty()}")
+                            Log.d(LOG_TAG, "Select SKU - ${sku?.skuId.orEmpty()}")
+                            Log.d(
+                                LOG_TAG,
+                                "selected sku: -> ${sku?.skuDetails?.price}  ${sku?.skuDetails?.priceCurrencyCode}"
+                            )
                         }
                         NamiPaywallAction.NAMI_RESTORE_PURCHASES -> {
                             Log.d(LOG_TAG, "Restore Purchases")
@@ -158,7 +145,11 @@ fun CampaignRow(campaign: CampaignItem) {
                             Log.d(LOG_TAG, "Close Paywall")
                         }
                         NamiPaywallAction.NAMI_PURCHASE_SELECTED_SKU -> {
-                            Log.d(LOG_TAG, "Purchase Selected SKU - ${skuId.orEmpty()}")
+                            Log.d(LOG_TAG, "Purchase Selected SKU - ${sku?.skuId.orEmpty()}")
+                            Log.d(
+                                LOG_TAG,
+                                "selected sku: -> ${sku?.skuDetails?.price}  ${sku?.skuDetails?.priceCurrencyCode}"
+                            )
                         }
                     }
                 }) { result ->
@@ -201,8 +192,35 @@ fun CampaignRow(campaign: CampaignItem) {
                     //
                     label = ""
                 }
-                NamiCampaignManager.launch(activity, label, paywallActionCallback = { action, skuId ->
-                    Log.d(LOG_TAG, "New Paywall Action $action with ${skuId.orEmpty()}")
+                NamiCampaignManager.launch(activity, label, paywallActionCallback = { action, sku ->
+                    when (action) {
+                        NamiPaywallAction.NAMI_BUY_SKU -> {
+                            Log.d(LOG_TAG, "Buy SKU - ${sku?.skuId.orEmpty()}")
+                        }
+                        NamiPaywallAction.NAMI_SELECT_SKU -> {
+                            Log.d(LOG_TAG, "Select SKU - ${sku?.skuId.orEmpty()}")
+                            Log.d(
+                                LOG_TAG,
+                                "selected sku: -> ${sku?.skuDetails?.price}  ${sku?.skuDetails?.priceCurrencyCode}"
+                            )
+                        }
+                        NamiPaywallAction.NAMI_RESTORE_PURCHASES -> {
+                            Log.d(LOG_TAG, "Restore Purchases")
+                        }
+                        NamiPaywallAction.NAMI_SIGN_IN -> {
+                            Log.d(LOG_TAG, "Sign in")
+                        }
+                        NamiPaywallAction.NAMI_CLOSE_PAYWALL -> {
+                            Log.d(LOG_TAG, "Close Paywall")
+                        }
+                        NamiPaywallAction.NAMI_PURCHASE_SELECTED_SKU -> {
+                            Log.d(LOG_TAG, "Purchase Selected SKU - ${sku?.skuId.orEmpty()}")
+                            Log.d(
+                                LOG_TAG,
+                                "selected sku: -> ${sku?.skuDetails?.price}  ${sku?.skuDetails?.priceCurrencyCode}"
+                            )
+                        }
+                    }
                 }) { result ->
                     when (result) {
                         is LaunchCampaignResult.Success -> {
@@ -221,8 +239,15 @@ fun CampaignRow(campaign: CampaignItem) {
 
                             if (result.purchaseState == NamiPurchaseState.PURCHASED) {
                                 Log.d(LOG_TAG, "Purchased! -> ${result.activePurchases}")
+                                for (purchase in result.activePurchases) {
+                                    Log.d(LOG_TAG, "purchase sku! -> ${purchase.namiSku}")
+                                    Log.d(
+                                        LOG_TAG,
+                                        "purchase sku details! -> ${purchase.namiSku?.skuDetails?.price}  ${purchase.namiSku?.skuDetails?.priceCurrencyCode}"
+                                    )
+                                }
                             }
-                            else if (result.purchaseState == NamiPurchaseState.CANCELLED) {
+                            if (result.purchaseState == NamiPurchaseState.CANCELLED) {
                                 Log.d(
                                     LOG_TAG,
                                     "Cancelled Purchase Flow! -> ${result.activePurchases}"
@@ -251,7 +276,7 @@ fun CampaignRow(campaign: CampaignItem) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CampaignsList() {
+fun CampaignsList(campaignItems: List<CampaignItem>) {
     CampaignCard(title = "Launch a Campaign", subtitle = "Tap a campaign to show a paywall")
 
     LazyColumn(modifier = Modifier.padding(top = 80.dp)) {
@@ -263,7 +288,9 @@ fun CampaignsList() {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CampaignsListTV() {
+fun CampaignsListTV(
+    campaignItems: List<CampaignItem>
+) {
     CampaignCard(title = "Launch a Campaign", subtitle = "Choose a campaign to show a paywall")
 
     LazyVerticalGrid(
@@ -278,16 +305,52 @@ fun CampaignsListTV() {
 }
 
 @Composable
-fun CampaignView(leanback: Boolean) {
+fun CampaignView(
+    leanback: Boolean,
+    campaigns: List<NamiCampaign>
+) {
+    val campaignItems = campaigns.sortedBy { it.value }
+        .map {
+            CampaignItem(
+                when (it.type) {
+                    NamiCampaignRuleType.DEFAULT -> 1
+                    NamiCampaignRuleType.LABEL -> 2
+                },
+                it.value ?: "default",
+                when (it.type) {
+                    NamiCampaignRuleType.DEFAULT -> "default"
+                    NamiCampaignRuleType.LABEL -> "label"
+                },
+                it.value
+            )
+        }
+
     if (leanback) {
-        CampaignsListTV()
+        CampaignsListTV(campaignItems)
     } else {
-        CampaignsList()
+        Scaffold(
+            floatingActionButton = {
+                ExtendedFloatingActionButton(
+                    text = { Text("Refresh") },
+                    onClick = {
+                        NamiCampaignManager.refresh() {
+                            campaignItems.takeIf { it.size > 0 }
+                        }
+                    },
+                    elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                    backgroundColor = MaterialTheme.colors.primary,
+                    contentColor = MaterialTheme.colors.background
+                )
+            },
+            content = {
+                CampaignsList(campaignItems)
+            }
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun CampaignViewPreview() {
-    CampaignView(leanback = false)
+    CampaignView(leanback = false, listOf())
 }
