@@ -23,8 +23,8 @@
         android:banner="@drawable/banner"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="${appIcon}"
-        android:label="${label}"
+        android:icon="@mipmap/ic_launcher_prod"
+        android:label="TestNami"
         android:supportsRtl="true"
         android:theme="@style/Theme.TestNami"
         tools:targetApi="31">
