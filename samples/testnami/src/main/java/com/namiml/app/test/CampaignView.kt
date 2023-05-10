@@ -127,43 +127,43 @@ fun CampaignRow(campaign: CampaignItem) {
                         NamiPaywallAction.NAMI_BUY_SKU -> {
                             Log.d(
                                 LOG_TAG,
-                                "Buy SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}"
+                                "Buy SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}",
                             )
                         }
                         NamiPaywallAction.NAMI_SELECT_SKU -> {
                             Log.d(
                                 LOG_TAG,
-                                "Select SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}"
+                                "Select SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}",
                             )
                         }
                         NamiPaywallAction.NAMI_RESTORE_PURCHASES -> {
                             Log.d(
                                 LOG_TAG,
-                                "Restore Purchases (campaign $campaignId $campaignLabel paywall $paywallId)"
+                                "Restore Purchases (campaign $campaignId $campaignLabel paywall $paywallId)",
                             )
                         }
                         NamiPaywallAction.NAMI_SIGN_IN -> {
                             Log.d(
                                 LOG_TAG,
-                                "Sign in (campaign $campaignId $campaignLabel paywall $paywallId)"
+                                "Sign in (campaign $campaignId $campaignLabel paywall $paywallId)",
                             )
                         }
                         NamiPaywallAction.NAMI_SHOW_PAYWALL -> {
                             Log.d(
                                 LOG_TAG,
-                                "Show Paywall (campaign $campaignId $campaignLabel paywall $paywallId)"
+                                "Show Paywall (campaign $campaignId $campaignLabel paywall $paywallId)",
                             )
                         }
                         NamiPaywallAction.NAMI_CLOSE_PAYWALL -> {
                             Log.d(
                                 LOG_TAG,
-                                "Close Paywall (campaign $campaignId $campaignLabel paywall $paywallId)"
+                                "Close Paywall (campaign $campaignId $campaignLabel paywall $paywallId)",
                             )
                         }
                         NamiPaywallAction.NAMI_PURCHASE_SELECTED_SKU -> {
                             Log.d(
                                 LOG_TAG,
-                                "Purchase Selected SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}"
+                                "Purchase Selected SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}",
                             )
                         }
                         NamiPaywallAction.NAMI_PURCHASE_SUCCESS -> {
@@ -223,43 +223,43 @@ fun CampaignRow(campaign: CampaignItem) {
                         NamiPaywallAction.NAMI_BUY_SKU -> {
                             Log.d(
                                 LOG_TAG,
-                                "Buy SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}"
+                                "Buy SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}",
                             )
                         }
                         NamiPaywallAction.NAMI_SELECT_SKU -> {
                             Log.d(
                                 LOG_TAG,
-                                "Select SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}"
+                                "Select SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}",
                             )
                         }
                         NamiPaywallAction.NAMI_RESTORE_PURCHASES -> {
                             Log.d(
                                 LOG_TAG,
-                                "Restore Purchases (campaign $campaignId $campaignLabel paywall $paywallId)"
+                                "Restore Purchases (campaign $campaignId $campaignLabel paywall $paywallId)",
                             )
                         }
                         NamiPaywallAction.NAMI_SIGN_IN -> {
                             Log.d(
                                 LOG_TAG,
-                                "Sign in (campaign $campaignId $campaignLabel paywall $paywallId)"
+                                "Sign in (campaign $campaignId $campaignLabel paywall $paywallId)",
                             )
                         }
                         NamiPaywallAction.NAMI_SHOW_PAYWALL -> {
                             Log.d(
                                 LOG_TAG,
-                                "Show Paywall (campaign $campaignId $campaignLabel paywall $paywallId)"
+                                "Show Paywall (campaign $campaignId $campaignLabel paywall $paywallId)",
                             )
                         }
                         NamiPaywallAction.NAMI_CLOSE_PAYWALL -> {
                             Log.d(
                                 LOG_TAG,
-                                "Close Paywall (campaign $campaignId $campaignLabel paywall $paywallId)"
+                                "Close Paywall (campaign $campaignId $campaignLabel paywall $paywallId)",
                             )
                         }
                         NamiPaywallAction.NAMI_PURCHASE_SELECTED_SKU -> {
                             Log.d(
                                 LOG_TAG,
-                                "Purchase Selected SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}"
+                                "Purchase Selected SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}",
                             )
                         }
                         NamiPaywallAction.NAMI_PURCHASE_SUCCESS -> {
