@@ -22,18 +22,6 @@ jobs:
         run: |
           ./gradlew clean
 
-      - name: Build Basic
-        run: |
-          ./gradlew samples:basic:bundleRelease
-
-      - name: Build Basic Linked
-        run: |
-          ./gradlew samples:basicLinked:bundleRelease
-
-      - name: Build Basic Java
-        run: |
-          ./gradlew samples:basicJava:bundleRelease
-
       - name: Build Test Nami
         run: |
           ./gradlew samples:testnami:bundleRelease

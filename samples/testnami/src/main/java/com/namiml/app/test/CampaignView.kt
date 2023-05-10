@@ -24,7 +24,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.namiml.app.test.ui.theme.DarkGrey
-import com.namiml.billing.NamiPurchaseState
 import com.namiml.campaign.LaunchCampaignResult
 import com.namiml.campaign.NamiCampaign
 import com.namiml.campaign.NamiCampaignManager
@@ -33,19 +32,19 @@ import com.namiml.paywall.model.NamiPaywallAction
 
 data class CampaignHeader(
     var group: Number,
-    var name: String
+    var name: String,
 )
 
 data class CampaignItem(
     val group: Number,
     val name: String,
     val type: String,
-    val label: String?
+    val label: String?,
 )
 
 val headers = listOf(
     CampaignHeader(1, "Live Unlabeled Campaign"),
-    CampaignHeader(2, "Live Labeled Campaign")
+    CampaignHeader(2, "Live Labeled Campaign"),
 )
 
 fun getHeader(headerGroup: Number): CampaignHeader {
@@ -62,7 +61,7 @@ fun CampaignTitleText(text: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 20.dp),
-        color = Color.Black
+        color = Color.Black,
     )
 }
 
@@ -75,7 +74,7 @@ fun CampaignSubtitleText(text: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 20.dp),
-        color = Color.Black
+        color = Color.Black,
     )
 }
 
@@ -91,7 +90,7 @@ fun CampaignCard(title: String, subtitle: String) {
             Row {
                 Column(
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     CampaignTitleText(text = title)
                     CampaignSubtitleText(text = subtitle)
@@ -108,7 +107,7 @@ fun Header(name: String) {
         fontSize = 10.sp,
         textAlign = TextAlign.Left,
         modifier = Modifier.padding(14.dp),
-        color = DarkGrey
+        color = DarkGrey,
     )
 }
 
@@ -123,32 +122,78 @@ fun CampaignRow(campaign: CampaignItem) {
             .focusable(),
         onClick = {
             if (campaign.type == "default") {
-                NamiCampaignManager.launch(activity, paywallActionCallback = { action, sku ->
+                NamiCampaignManager.launch(activity, paywallActionCallback = { campaignId, campaignLabel, paywallId, action, sku, purchaseError, purchases ->
                     when (action) {
                         NamiPaywallAction.NAMI_BUY_SKU -> {
-                            Log.d(LOG_TAG, "Buy SKU - ${sku?.skuId.orEmpty()}")
-                        }
-                        NamiPaywallAction.NAMI_SELECT_SKU -> {
-                            Log.d(LOG_TAG, "Select SKU - ${sku?.skuId.orEmpty()}")
                             Log.d(
                                 LOG_TAG,
-                                "selected sku: -> ${sku?.skuDetails?.price}  ${sku?.skuDetails?.priceCurrencyCode}"
+                                "Buy SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_SELECT_SKU -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Select SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}",
                             )
                         }
                         NamiPaywallAction.NAMI_RESTORE_PURCHASES -> {
-                            Log.d(LOG_TAG, "Restore Purchases")
-                        }
-                        NamiPaywallAction.NAMI_SIGN_IN -> {
-                            Log.d(LOG_TAG, "Sign in")
-                        }
-                        NamiPaywallAction.NAMI_CLOSE_PAYWALL -> {
-                            Log.d(LOG_TAG, "Close Paywall")
-                        }
-                        NamiPaywallAction.NAMI_PURCHASE_SELECTED_SKU -> {
-                            Log.d(LOG_TAG, "Purchase Selected SKU - ${sku?.skuId.orEmpty()}")
                             Log.d(
                                 LOG_TAG,
-                                "selected sku: -> ${sku?.skuDetails?.price}  ${sku?.skuDetails?.priceCurrencyCode}"
+                                "Restore Purchases (campaign $campaignId $campaignLabel paywall $paywallId)",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_SIGN_IN -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Sign in (campaign $campaignId $campaignLabel paywall $paywallId)",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_SHOW_PAYWALL -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Show Paywall (campaign $campaignId $campaignLabel paywall $paywallId)",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_CLOSE_PAYWALL -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Close Paywall (campaign $campaignId $campaignLabel paywall $paywallId)",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_PURCHASE_SELECTED_SKU -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Purchase Selected SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_PURCHASE_SUCCESS -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Purchase Success (campaign $campaignId $campaignLabel paywall $paywallId) -> ${sku?.skuId} $purchases",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_PURCHASE_FAILED -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Purchase Failed (campaign $campaignId $campaignLabel paywall $paywallId) -> ${sku?.skuId} $purchaseError",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_PURCHASE_CANCELLED -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Purchase Cancelled (campaign $campaignId $campaignLabel paywall $paywallId) -> ${sku?.skuId} $purchaseError",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_PURCHASE_PENDING -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Purchase Pending (campaign $campaignId $campaignLabel paywall $paywallId) -> ${sku?.skuId} $purchaseError",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_PURCHASE_UNKNOWN -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Purchase Flow Unknown (campaign $campaignId $campaignLabel paywall $paywallId) -> ${sku?.skuId} $purchaseError",
                             )
                         }
                     }
@@ -162,27 +207,8 @@ fun CampaignRow(campaign: CampaignItem) {
                             Toast.makeText(
                                 activity,
                                 "Campaign Default Launch Error -> ${result.error}",
-                                Toast.LENGTH_LONG
+                                Toast.LENGTH_LONG,
                             ).show()
-                        }
-                        is LaunchCampaignResult.PurchaseChanged -> {
-                            Log.d(
-                                LOG_TAG,
-                                "Launch Campaign Result - Purchase changed -> ${result.purchaseState}"
-                            )
-
-                            if (result.purchaseState == NamiPurchaseState.PURCHASED) {
-                                Log.d(
-                                    LOG_TAG,
-                                    "PurchasedState - Purchased -> ${result.activePurchases}"
-                                )
-                            }
-                            if (result.purchaseState == NamiPurchaseState.CANCELLED) {
-                                Log.d(
-                                    LOG_TAG,
-                                    "PurchaseState - Cancelled -> ${result.activePurchases}"
-                                )
-                            }
                         }
                     }
                 }
@@ -192,32 +218,78 @@ fun CampaignRow(campaign: CampaignItem) {
                     //
                     label = ""
                 }
-                NamiCampaignManager.launch(activity, label, paywallActionCallback = { action, sku ->
+                NamiCampaignManager.launch(activity, label, paywallActionCallback = { campaignId, campaignLabel, paywallId, action, sku, purchaseError, purchases ->
                     when (action) {
                         NamiPaywallAction.NAMI_BUY_SKU -> {
-                            Log.d(LOG_TAG, "Buy SKU - ${sku?.skuId.orEmpty()}")
-                        }
-                        NamiPaywallAction.NAMI_SELECT_SKU -> {
-                            Log.d(LOG_TAG, "Select SKU - ${sku?.skuId.orEmpty()}")
                             Log.d(
                                 LOG_TAG,
-                                "selected sku: -> ${sku?.skuDetails?.price}  ${sku?.skuDetails?.priceCurrencyCode}"
+                                "Buy SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_SELECT_SKU -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Select SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}",
                             )
                         }
                         NamiPaywallAction.NAMI_RESTORE_PURCHASES -> {
-                            Log.d(LOG_TAG, "Restore Purchases")
-                        }
-                        NamiPaywallAction.NAMI_SIGN_IN -> {
-                            Log.d(LOG_TAG, "Sign in")
-                        }
-                        NamiPaywallAction.NAMI_CLOSE_PAYWALL -> {
-                            Log.d(LOG_TAG, "Close Paywall")
-                        }
-                        NamiPaywallAction.NAMI_PURCHASE_SELECTED_SKU -> {
-                            Log.d(LOG_TAG, "Purchase Selected SKU - ${sku?.skuId.orEmpty()}")
                             Log.d(
                                 LOG_TAG,
-                                "selected sku: -> ${sku?.skuDetails?.price}  ${sku?.skuDetails?.priceCurrencyCode}"
+                                "Restore Purchases (campaign $campaignId $campaignLabel paywall $paywallId)",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_SIGN_IN -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Sign in (campaign $campaignId $campaignLabel paywall $paywallId)",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_SHOW_PAYWALL -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Show Paywall (campaign $campaignId $campaignLabel paywall $paywallId)",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_CLOSE_PAYWALL -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Close Paywall (campaign $campaignId $campaignLabel paywall $paywallId)",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_PURCHASE_SELECTED_SKU -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Purchase Selected SKU (campaign $campaignId $campaignLabel paywall $paywallId) - ${sku?.skuId.orEmpty()}",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_PURCHASE_SUCCESS -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Purchase Success (campaign $campaignId $campaignLabel paywall $paywallId) -> ${sku?.skuId} $purchases",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_PURCHASE_FAILED -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Purchase Failed (campaign $campaignId $campaignLabel paywall $paywallId) -> ${sku?.skuId} $purchaseError",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_PURCHASE_CANCELLED -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Purchase Cancelled (campaign $campaignId $campaignLabel paywall $paywallId) -> ${sku?.skuId} $purchaseError",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_PURCHASE_PENDING -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Purchase Pending (campaign $campaignId $campaignLabel paywall $paywallId) -> ${sku?.skuId} $purchaseError",
+                            )
+                        }
+                        NamiPaywallAction.NAMI_PURCHASE_UNKNOWN -> {
+                            Log.d(
+                                LOG_TAG,
+                                "Purchase Flow Unknown (campaign $campaignId $campaignLabel paywall $paywallId) -> ${sku?.skuId} $purchaseError",
                             )
                         }
                     }
@@ -231,36 +303,16 @@ fun CampaignRow(campaign: CampaignItem) {
                             Toast.makeText(
                                 activity,
                                 "Campaign (label: $label) Launch Error -> ${result.error}",
-                                Toast.LENGTH_LONG
+                                Toast.LENGTH_LONG,
                             ).show()
-                        }
-                        is LaunchCampaignResult.PurchaseChanged -> {
-                            Log.d(LOG_TAG, "Purchase changed -> ${result.purchaseState}")
-
-                            if (result.purchaseState == NamiPurchaseState.PURCHASED) {
-                                Log.d(LOG_TAG, "Purchased! -> ${result.activePurchases}")
-                                for (purchase in result.activePurchases) {
-                                    Log.d(LOG_TAG, "purchase sku! -> ${purchase.namiSku}")
-                                    Log.d(
-                                        LOG_TAG,
-                                        "purchase sku details! -> ${purchase.namiSku?.skuDetails?.price}  ${purchase.namiSku?.skuDetails?.priceCurrencyCode}"
-                                    )
-                                }
-                            }
-                            if (result.purchaseState == NamiPurchaseState.CANCELLED) {
-                                Log.d(
-                                    LOG_TAG,
-                                    "Cancelled Purchase Flow! -> ${result.activePurchases}"
-                                )
-                            }
                         }
                     }
                 }
             }
         },
         colors = ButtonDefaults.textButtonColors(
-            backgroundColor = color
-        )
+            backgroundColor = color,
+        ),
     ) {
         Text(
             text = campaign.name,
@@ -269,7 +321,7 @@ fun CampaignRow(campaign: CampaignItem) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(14.dp),
-            color = Color.Black
+            color = Color.Black,
         )
     }
 }
@@ -289,14 +341,14 @@ fun CampaignsList(campaignItems: List<CampaignItem>) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CampaignsListTV(
-    campaignItems: List<CampaignItem>
+    campaignItems: List<CampaignItem>,
 ) {
     CampaignCard(title = "Launch a Campaign", subtitle = "Choose a campaign to show a paywall")
 
     LazyVerticalGrid(
         modifier = Modifier.padding(top = 60.dp),
         columns = GridCells.Adaptive(200.dp),
-        contentPadding = PaddingValues(8.dp)
+        contentPadding = PaddingValues(8.dp),
     ) {
         items(campaignItems) { campaign ->
             CampaignRow(campaign)
@@ -307,7 +359,7 @@ fun CampaignsListTV(
 @Composable
 fun CampaignView(
     leanback: Boolean,
-    campaigns: List<NamiCampaign>
+    campaigns: List<NamiCampaign>,
 ) {
     val campaignItems = campaigns.sortedBy { it.value }
         .map {
@@ -321,7 +373,7 @@ fun CampaignView(
                     NamiCampaignRuleType.DEFAULT -> "default"
                     NamiCampaignRuleType.LABEL -> "label"
                 },
-                it.value
+                it.value,
             )
         }
 
@@ -339,12 +391,12 @@ fun CampaignView(
                     },
                     elevation = FloatingActionButtonDefaults.elevation(8.dp),
                     backgroundColor = MaterialTheme.colors.primary,
-                    contentColor = MaterialTheme.colors.background
+                    contentColor = MaterialTheme.colors.background,
                 )
             },
             content = {
                 CampaignsList(campaignItems)
-            }
+            },
         )
     }
 }

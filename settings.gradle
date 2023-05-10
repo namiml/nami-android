@@ -1,4 +1,1 @@
-include ':samples:basicLinked'
-include ':samples:basic'
-include ':samples:basicJava'
 include ':samples:testnami'
