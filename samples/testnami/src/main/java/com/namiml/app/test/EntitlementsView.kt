@@ -31,7 +31,7 @@ fun EntitlementsStatusText(status: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 20.dp, bottom = 20.dp),
-        color = Color.Black
+        color = Color.Black,
     )
 }
 
@@ -46,7 +46,7 @@ fun EntitlementsCard(status: String) {
             Row {
                 Column(
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     EntitlementsStatusText(status = status)
                 }
@@ -62,14 +62,14 @@ fun ActiveEntitlementRow(entitlement: NamiEntitlement) {
         fontSize = 18.sp,
         textAlign = TextAlign.Left,
         modifier = Modifier.fillMaxWidth().padding(14.dp),
-        color = Color.Black
+        color = Color.Black,
     )
 }
 
 @Composable
 fun EntitlementsView(
     leanback: Boolean = false,
-    entitlementsViewModel: EntitlementsViewModel = viewModel()
+    entitlementsViewModel: EntitlementsViewModel = viewModel(),
 ) {
     val activeEntitlements by entitlementsViewModel.activeEntitlementsStateFlow.collectAsState()
 
@@ -84,18 +84,22 @@ fun EntitlementsView(
                 },
                 elevation = FloatingActionButtonDefaults.elevation(8.dp),
                 backgroundColor = MaterialTheme.colors.primary,
-                contentColor = MaterialTheme.colors.background
+                contentColor = MaterialTheme.colors.background,
             )
         },
         content = {
             LazyColumn(
-                modifier = Modifier.padding(start = 40.dp, end = 40.dp).takeIf { leanback } ?: Modifier.padding(
-                    0.dp
-                )
+                modifier = Modifier.padding(start = 40.dp, end = 40.dp).takeIf {
+                    leanback
+                } ?: Modifier.padding(
+                    0.dp,
+                ),
             ) {
                 item {
                     EntitlementsCard(
-                        "No Active Entitlements for User".takeIf { activeEntitlements.count() == 0 } ?: "Active Entitlements"
+                        "No Active Entitlements for User".takeIf {
+                            activeEntitlements.count() == 0
+                        } ?: "Active Entitlements",
                     )
                 }
                 if (activeEntitlements.count() != 0) {
@@ -107,7 +111,7 @@ fun EntitlementsView(
                     }
                 }
             }
-        }
+        },
     )
 }
 

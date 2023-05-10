@@ -22,7 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.namiml.app.test.ui.theme.DarkGrey
 import com.namiml.customer.NamiCustomerManager
 
-val TEST_EXTERNAL_ID = "bff491f5-9b9f-4532-89b2-7199592bf02e"
+val TEST_EXTERNAL_ID = "123456"
 
 @Composable
 fun RowHeader(name: String) {
@@ -31,7 +31,7 @@ fun RowHeader(name: String) {
         fontSize = 10.sp,
         textAlign = TextAlign.Center,
         modifier = Modifier.padding(14.dp),
-        color = DarkGrey
+        color = DarkGrey,
     )
 }
 
@@ -45,7 +45,7 @@ fun ProfileStatusText(status: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 20.dp),
-        color = Color.Black
+        color = Color.Black,
     )
 }
 
@@ -58,7 +58,7 @@ fun ProfileIdentifierText(identifier: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 20.dp),
-        color = Color.Black
+        color = Color.Black,
     )
 }
 
@@ -68,7 +68,7 @@ fun StatusCircle(color: Color) {
         modifier = Modifier
             .size(8.dp)
             .clip(CircleShape)
-            .background(color)
+            .background(color),
     )
 }
 
@@ -84,7 +84,7 @@ fun ProfileCard(status: String, identifier: String) {
             Row {
                 Column(
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     ProfileStatusText(status = status)
                     ProfileIdentifierText(identifier = identifier)
@@ -101,18 +101,18 @@ fun JourneyStateRow(name: String, on: Boolean) {
             .fillMaxWidth()
             .padding(start = 14.dp),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             StatusCircle(
                 if (on) {
                     Color.Green
                 } else {
                     Color.LightGray
-                }
+                },
             )
             Text(
                 text = name,
@@ -121,7 +121,7 @@ fun JourneyStateRow(name: String, on: Boolean) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(14.dp),
-                color = Color.Black
+                color = Color.Black,
             )
         }
     }
@@ -143,26 +143,28 @@ fun ProfileView(leanback: Boolean = false, profileViewModel: ProfileViewModel = 
                 text = { Text("Logout".takeIf { isLoggedIn } ?: "Login") },
                 onClick = {
                     NamiCustomerManager.logout().takeIf { isLoggedIn } ?: NamiCustomerManager.login(
-                        TEST_EXTERNAL_ID
+                        TEST_EXTERNAL_ID,
                     )
                 },
                 elevation = FloatingActionButtonDefaults.elevation(8.dp),
                 backgroundColor = MaterialTheme.colors.primary,
-                contentColor = MaterialTheme.colors.background
+                contentColor = MaterialTheme.colors.background,
             )
         },
         content = {
             LazyColumn(
-                modifier = Modifier.padding(start = 40.dp, end = 40.dp).takeIf { leanback } ?: Modifier.padding(
-                    0.dp
-                )
+                modifier = Modifier.padding(start = 40.dp, end = 40.dp).takeIf {
+                    leanback
+                } ?: Modifier.padding(
+                    0.dp,
+                ),
             ) {
                 item {
                     ProfileCard(
                         status = "Registered User".takeIf { isLoggedIn }
                             ?: "Anonymous User",
                         identifier = "External Id: $externalId".takeIf { isLoggedIn }
-                            ?: "Device Id: $deviceId"
+                            ?: "Device Id: $deviceId",
                     )
                 }
                 item {
@@ -190,7 +192,7 @@ fun ProfileView(leanback: Boolean = false, profileViewModel: ProfileViewModel = 
                     JourneyStateRow("In Account Hold", journeyState.inAccountHold)
                 }
             }
-        }
+        },
     )
 }
 
