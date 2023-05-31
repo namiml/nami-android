@@ -34,6 +34,7 @@ import com.namiml.NamiLogLevel
 import com.namiml.app.test.ui.theme.TestNamiTheme
 import com.namiml.campaign.NamiCampaign
 import com.namiml.campaign.NamiCampaignManager
+import com.namiml.customer.NamiCustomerManager
 import com.namiml.demo.basicpaywallmgmt.GooglePlayBillingHelper
 import com.namiml.demo.basicpaywallmgmt.GooglePlayPurchaseListener
 import com.namiml.paywall.NamiPaywallManager
@@ -77,6 +78,8 @@ class MainActivity : ComponentActivity() {
         if (getPackageManager().hasSystemFeature(AMAZON_FEATURE_FIRE_TV)) {
             appPlatformId = BuildConfig.APP_PLATFORM_ID_AMAZON
         }
+        
+        val initialConfigStringFromFile = readInitialConfigFromAsset(this@MainActivity)
 
         Nami.configure(
             NamiConfiguration.build(this, appPlatformId) {
@@ -84,6 +87,7 @@ class MainActivity : ComponentActivity() {
                 if (BuildConfig.NAMI_ENV_PROD == false) {
                     settingsList = listOf("useStagingAPI")
                 }
+                initialConfig = initialConfigStringFromFile
 //                namiLanguageCode = NamiLanguageCode.DE
             },
         )
@@ -111,6 +115,8 @@ class MainActivity : ComponentActivity() {
         NamiPaywallManager.registerBuySkuHandler { paywall, sku ->
             Log.d(LOG_TAG, "registerBuySkuHandler ${sku.skuId}")
 
+            NamiPaywallManager.dismiss(paywall)
+
             purchasesUpdatedListener.paywall = paywall
             purchasesUpdatedListener.sku = sku
 
@@ -125,7 +131,7 @@ class MainActivity : ComponentActivity() {
             val params = QueryProductDetailsParams.newBuilder().setProductList(productList)
 
             purchasesUpdatedListener.billingClient?.queryProductDetailsAsync(params.build()) { billingResult,
-                    productDetailsList, ->
+                                                                                               productDetailsList, ->
                 // Process the result
                 Log.d(LOG_TAG, "billingResult $billingResult")
 
@@ -167,6 +173,10 @@ class MainActivity : ComponentActivity() {
         NamiCampaignManager.registerAvailableCampaignsHandler {
             campaigns = it
         }
+
+        NamiCustomerManager.setCustomerDataPlatformId("12345")
+
+        NamiCustomerManager.setCustomerAttribute("firstName", "Taylor")
     }
 }
 
