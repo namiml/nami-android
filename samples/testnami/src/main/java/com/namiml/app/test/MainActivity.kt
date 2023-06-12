@@ -78,8 +78,6 @@ class MainActivity : ComponentActivity() {
         if (getPackageManager().hasSystemFeature(AMAZON_FEATURE_FIRE_TV)) {
             appPlatformId = BuildConfig.APP_PLATFORM_ID_AMAZON
         }
-        
-        val initialConfigStringFromFile = readInitialConfigFromAsset(this@MainActivity)
 
         Nami.configure(
             NamiConfiguration.build(this, appPlatformId) {
@@ -87,7 +85,6 @@ class MainActivity : ComponentActivity() {
                 if (BuildConfig.NAMI_ENV_PROD == false) {
                     settingsList = listOf("useStagingAPI")
                 }
-                initialConfig = initialConfigStringFromFile
 //                namiLanguageCode = NamiLanguageCode.DE
             },
         )
