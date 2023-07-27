@@ -8,7 +8,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -132,10 +131,8 @@ fun ProfileView(leanback: Boolean = false, profileViewModel: ProfileViewModel = 
     val journeyState by profileViewModel.journeyStateFlow.collectAsState()
     val isLoggedIn by profileViewModel.isLoggedInFlow.collectAsState()
     val externalId by profileViewModel.externalIdFlow.collectAsState()
-
-    val deviceId by remember {
-        profileViewModel.deviceId
-    }
+    val inAnonymousMode by profileViewModel.inAnonymousModeFlow.collectAsState()
+    val deviceId by profileViewModel.deviceIdFlow.collectAsState()
 
     Scaffold(
         floatingActionButton = {

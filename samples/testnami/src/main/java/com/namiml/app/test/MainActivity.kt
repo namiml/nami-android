@@ -2,6 +2,7 @@ package com.namiml.app.test
 
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -11,8 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +35,7 @@ import com.namiml.Nami
 import com.namiml.NamiConfiguration
 import com.namiml.NamiLogLevel
 import com.namiml.app.test.ui.theme.TestNamiTheme
+import com.namiml.campaign.LaunchCampaignResult
 import com.namiml.campaign.NamiCampaign
 import com.namiml.campaign.NamiCampaignManager
 import com.namiml.customer.NamiCustomerManager
@@ -79,15 +83,46 @@ class MainActivity : ComponentActivity() {
             appPlatformId = BuildConfig.APP_PLATFORM_ID_AMAZON
         }
 
+        val initialConfigStringFromFile = readInitialConfigFromAsset(this@MainActivity)
+
         Nami.configure(
             NamiConfiguration.build(this, appPlatformId) {
                 logLevel = NamiLogLevel.DEBUG.takeIf { BuildConfig.DEBUG } ?: NamiLogLevel.WARN
-                if (BuildConfig.NAMI_ENV_PROD == false) {
-                    settingsList = listOf("useStagingAPI")
-                }
+                initialConfig = initialConfigStringFromFile
 //                namiLanguageCode = NamiLanguageCode.DE
             },
         )
+
+        val profileViewModel = ProfileViewModel()
+
+        val action: String? = intent?.action
+        val data: Uri? = intent?.data
+
+        if (action != null && data != null) {
+            Log.d(LOG_TAG, "Attempting to launch deeplink campaign from uri  $data")
+
+            NamiCampaignManager.launch(this, "", null, null, data) { result ->
+                when (result) {
+                    is LaunchCampaignResult.Success -> {
+                        Log.d(LOG_TAG, "Deeplink Launch Campaign Success")
+                    }
+                    is LaunchCampaignResult.Failure -> {
+                        Log.d(LOG_TAG, "Deeplink Launch Campaign Error -> ${result.error}")
+                    }
+                }
+            }
+
+            NamiCampaignManager.launch(this, "", null, null, data) { result ->
+                when (result) {
+                    is LaunchCampaignResult.Success -> {
+                        Log.d(LOG_TAG, "Deeplink Launch Campaign Success")
+                    }
+                    is LaunchCampaignResult.Failure -> {
+                        Log.d(LOG_TAG, "Deeplink Launch Campaign Error -> ${result.error}")
+                    }
+                }
+            }
+        }
 
         setContent {
             TestNamiTheme(production = BuildConfig.NAMI_ENV_PROD) {
@@ -96,7 +131,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background,
                 ) {
-                    TestApp(isTelevision, campaigns)
+                    TestApp(isTelevision, campaigns, profileViewModel)
                 }
             }
         }
@@ -110,9 +145,7 @@ class MainActivity : ComponentActivity() {
         // Only implemented for Paywalls-only plans. If on a Paywalls+Subscription Management plan
         // Nami takes care of these details (and more!) on your behalf.
         NamiPaywallManager.registerBuySkuHandler { paywall, sku ->
-            Log.d(LOG_TAG, "registerBuySkuHandler ${sku.skuId}")
-
-            NamiPaywallManager.dismiss(paywall)
+            Log.d(LOG_TAG, "registerBuySkuHandler ${sku.skuId} ${sku.promoId}")
 
             purchasesUpdatedListener.paywall = paywall
             purchasesUpdatedListener.sku = sku
@@ -127,41 +160,60 @@ class MainActivity : ComponentActivity() {
 
             val params = QueryProductDetailsParams.newBuilder().setProductList(productList)
 
-            purchasesUpdatedListener.billingClient?.queryProductDetailsAsync(params.build()) { billingResult,
-                                                                                               productDetailsList, ->
+            purchasesUpdatedListener.billingClient?.queryProductDetailsAsync(
+                params.build(),
+            ) { billingResult,
+                productDetailsList,
+                ->
                 // Process the result
-                Log.d(LOG_TAG, "billingResult $billingResult")
+                Log.d(LOG_TAG, "billingResult $billingResult $productDetailsList")
 
-                val offerToken = productDetailsList[0].subscriptionOfferDetails?.get(0)?.offerToken
+                productDetailsList?.firstOrNull().let {
+                    if (it?.productType == BillingClient.ProductType.SUBS) {
+                        var offer = it?.subscriptionOfferDetails?.firstOrNull { offer -> sku.promoId != null && offer?.offerId == sku.promoId }
 
-                val productDetailsParamsList: List<BillingFlowParams.ProductDetailsParams>
-                if (offerToken != null) {
-                    productDetailsParamsList =
-                        listOf(
-                            BillingFlowParams.ProductDetailsParams.newBuilder()
-                                .setProductDetails(productDetailsList[0])
-                                .setOfferToken(offerToken)
-                                .build(),
-                        )
-                } else {
-                    productDetailsParamsList =
-                        listOf(
-                            BillingFlowParams.ProductDetailsParams.newBuilder()
-                                .setProductDetails(productDetailsList[0])
-                                .build(),
+                        if (offer == null) {
+                            offer = it?.subscriptionOfferDetails?.firstOrNull { offer -> offer.offerId != null }
+                        }
+                        if (offer != null) {
+                            Log.d(
+                                LOG_TAG,
+                                "We have an offer ${offer.offerId} on ${offer.basePlanId}",
+                            )
+                        } else {
+                            Log.d(
+                                LOG_TAG,
+                                "We do not an offer for ${sku.skuId}}",
+                            )
+                        }
+                        var productDetailsParamsList = if (offer != null) {
+                            listOf(
+                                BillingFlowParams.ProductDetailsParams.newBuilder()
+                                    .setProductDetails(it)
+                                    .setOfferToken(offer.offerToken)
+                                    .build(),
+                            )
+                        } else {
+                            listOf(
+                                BillingFlowParams.ProductDetailsParams.newBuilder()
+                                    .setProductDetails(it)
+                                    .build(),
+                            )
+                        }
 
-                        )
+                        val billingFlowParams =
+                            BillingFlowParams.newBuilder()
+                                .setProductDetailsParamsList(productDetailsParamsList)
+                                .build()
+
+                        val billingResult =
+                            purchasesUpdatedListener.billingClient?.launchBillingFlow(
+                                paywall,
+                                billingFlowParams,
+                            )
+                        Log.d(LOG_TAG, "final billingResult $billingResult")
+                    }
                 }
-
-                val billingFlowParams =
-                    BillingFlowParams.newBuilder()
-                        .setProductDetailsParamsList(productDetailsParamsList)
-                        .build()
-
-                val billingResult = purchasesUpdatedListener.billingClient?.launchBillingFlow(
-                    paywall,
-                    billingFlowParams,
-                )
             }
         }
 
@@ -171,6 +223,20 @@ class MainActivity : ComponentActivity() {
             campaigns = it
         }
 
+//        NamiPaywallManager.registerDeepLinkHandler { paywall, url ->
+//            NamiPaywallManager.dismiss(paywall)
+//
+//            try {
+//                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+//            } catch (e: ActivityNotFoundException) {
+//                Log.d(LOG_TAG, "Unable to open deeplink uri $url")
+//            }
+//        }
+
+        NamiPaywallManager.registerRestoreHandler { paywall ->
+            Log.d(LOG_TAG, "Restore on paywall called.")
+        }
+
         NamiCustomerManager.setCustomerDataPlatformId("12345")
 
         NamiCustomerManager.setCustomerAttribute("firstName", "Taylor")
@@ -178,8 +244,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TestApp(leanback: Boolean, campaigns: List<NamiCampaign>) {
+fun TestApp(leanback: Boolean, campaigns: List<NamiCampaign>, profileViewModel: ProfileViewModel) {
     val navController = rememberNavController()
+    val inAnonymousMode by profileViewModel.inAnonymousModeFlow.collectAsState()
+    var onClickHasExecuted by remember { mutableStateOf(inAnonymousMode) }
 
     Scaffold(
         topBar = {
@@ -199,6 +267,21 @@ fun TestApp(leanback: Boolean, campaigns: List<NamiCampaign>) {
                 } ?: Modifier.padding(
                     0.dp,
                 ),
+                actions = {
+                    Button(onClick = {
+                        val switchAnonymousMode = !inAnonymousMode
+
+                        if (switchAnonymousMode != onClickHasExecuted) {
+                            onClickHasExecuted = switchAnonymousMode
+                            NamiCustomerManager.setAnonymousMode(switchAnonymousMode)
+                        }
+                    }) {
+                        Text(
+                            "Turn off Anonymous Mode".takeIf { inAnonymousMode == true } ?: "Turn on Anonymous Mode",
+                            color = MaterialTheme.colors.background,
+                        )
+                    }
+                },
             )
         },
         bottomBar = { BottomNavigationBar(navController, leanback) },
@@ -208,6 +291,8 @@ fun TestApp(leanback: Boolean, campaigns: List<NamiCampaign>) {
                     navController = navController,
                     leanback = leanback,
                     campaigns = campaigns,
+                    profileViewModel = profileViewModel,
+
                 )
             }
         },
@@ -216,13 +301,18 @@ fun TestApp(leanback: Boolean, campaigns: List<NamiCampaign>) {
 }
 
 @Composable
-fun Navigation(navController: NavHostController, leanback: Boolean, campaigns: List<NamiCampaign>) {
+fun Navigation(
+    navController: NavHostController,
+    leanback: Boolean,
+    campaigns: List<NamiCampaign>,
+    profileViewModel: ProfileViewModel,
+) {
     NavHost(navController, startDestination = NavigationItem.Campaigns.route) {
         composable(NavigationItem.Campaigns.route) {
             CampaignView(leanback, campaigns)
         }
         composable(NavigationItem.Profile.route) {
-            ProfileView(leanback)
+            ProfileView(leanback, profileViewModel = profileViewModel)
         }
         composable(NavigationItem.Entitlements.route) {
             EntitlementsView(leanback)
@@ -234,6 +324,6 @@ fun Navigation(navController: NavHostController, leanback: Boolean, campaigns: L
 @Composable
 fun DefaultPreview() {
     TestNamiTheme {
-        TestApp(leanback = false, listOf())
+        TestApp(leanback = false, listOf(), profileViewModel = ProfileViewModel())
     }
 }

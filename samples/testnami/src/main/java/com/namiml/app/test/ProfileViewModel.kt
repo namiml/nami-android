@@ -30,6 +30,13 @@ class ProfileViewModel : ViewModel() {
     private val _externalIdFlow = MutableStateFlow<String?>(NamiCustomerManager.loggedInId())
     val externalIdFlow: StateFlow<String?> get() = _externalIdFlow
 
+    private val _deviceIdFlow = MutableStateFlow<String?>(NamiCustomerManager.deviceId())
+    val deviceIdFlow: StateFlow<String?> get() = _deviceIdFlow
+
+    private val _inAnonymousModeFlow =
+        MutableStateFlow<Boolean>(NamiCustomerManager.inAnonymousMode())
+    val inAnonymousModeFlow: StateFlow<Boolean> get() = _inAnonymousModeFlow
+
     init {
         NamiCustomerManager.registerJourneyStateHandler {
             _journeyStateFlow.value = it
@@ -37,8 +44,10 @@ class ProfileViewModel : ViewModel() {
 
         NamiCustomerManager.registerAccountStateHandler { accountStateAction, success, error ->
 
+            _deviceIdFlow.value = NamiCustomerManager.deviceId()
             _isLoggedInFlow.value = NamiCustomerManager.isLoggedIn()
             _externalIdFlow.value = NamiCustomerManager.loggedInId()
+            _inAnonymousModeFlow.value = NamiCustomerManager.inAnonymousMode()
 
             if (success) {
                 if (accountStateAction == AccountStateAction.LOGIN) {
@@ -57,6 +66,14 @@ class ProfileViewModel : ViewModel() {
                     Log.d(LOG_TAG, "CDP id was set")
                 } else if (accountStateAction == AccountStateAction.CUSTOMER_DATA_PLATFORM_ID_CLEARED) {
                     Log.d(LOG_TAG, "CDP id was cleared")
+                } else if (accountStateAction == AccountStateAction.NAMI_DEVICE_ID_SET) {
+                    Log.d(LOG_TAG, "Nami device id was set")
+                } else if (accountStateAction == AccountStateAction.NAMI_DEVICE_ID_CLEARED) {
+                    Log.d(LOG_TAG, "Nami device id was cleared")
+                } else if (accountStateAction == AccountStateAction.ANONYMOUS_MODE_ON) {
+                    Log.d(LOG_TAG, "Anonymous mode turned on")
+                } else if (accountStateAction == AccountStateAction.ANONYMOUS_MODE_OFF) {
+                    Log.d(LOG_TAG, "Anonymous mode turned off")
                 }
             } else if (error != null) {
                 if (accountStateAction == AccountStateAction.LOGIN) {
@@ -75,6 +92,20 @@ class ProfileViewModel : ViewModel() {
                     Log.d(LOG_TAG, "There was an error setting the cdp id. Error - $error")
                 } else if (accountStateAction == AccountStateAction.CUSTOMER_DATA_PLATFORM_ID_CLEARED) {
                     Log.d(LOG_TAG, "There was an error clearing the CDP id. Error - $error")
+                } else if (accountStateAction == AccountStateAction.NAMI_DEVICE_ID_SET) {
+                    Log.d(LOG_TAG, "There was an error setting the Nami device id. Error - $error")
+                } else if (accountStateAction == AccountStateAction.NAMI_DEVICE_ID_CLEARED) {
+                    Log.d(LOG_TAG, "There was an error clearing the Nami device id. Error - $error")
+                } else if (accountStateAction == AccountStateAction.ANONYMOUS_MODE_ON) {
+                    Log.d(
+                        LOG_TAG,
+                        "There was any error turning Anonymous mode turned on. Error - $error",
+                    )
+                } else if (accountStateAction == AccountStateAction.ANONYMOUS_MODE_OFF) {
+                    Log.d(
+                        LOG_TAG,
+                        "There was any error turning Anonymous mode turned off. Error - $error",
+                    )
                 }
             }
         }
