@@ -19,8 +19,8 @@ class ProfileViewModel : ViewModel() {
             formerSubscriber = false,
             inGracePeriod = false,
             inTrialPeriod = false,
-            inIntroOfferPeriod = false
-        )
+            inIntroOfferPeriod = false,
+        ),
     )
     val journeyStateFlow: StateFlow<CustomerJourneyState> get() = _journeyStateFlow
 
@@ -99,12 +99,12 @@ class ProfileViewModel : ViewModel() {
                 } else if (accountStateAction == AccountStateAction.ANONYMOUS_MODE_ON) {
                     Log.d(
                         LOG_TAG,
-                        "There was any error turning Anonymous mode turned on. Error - $error"
+                        "There was any error turning Anonymous mode turned on. Error - $error",
                     )
                 } else if (accountStateAction == AccountStateAction.ANONYMOUS_MODE_OFF) {
                     Log.d(
                         LOG_TAG,
-                        "There was any error turning Anonymous mode turned off. Error - $error"
+                        "There was any error turning Anonymous mode turned off. Error - $error",
                     )
                 }
             }

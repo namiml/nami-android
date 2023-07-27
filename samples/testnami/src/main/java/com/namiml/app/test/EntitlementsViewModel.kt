@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 class EntitlementsViewModel : ViewModel() {
 
     private val _activeEntitlementsStateFlow = MutableStateFlow<List<NamiEntitlement>>(
-        NamiEntitlementManager.active()
+        NamiEntitlementManager.active(),
     )
     val activeEntitlementsStateFlow: StateFlow<List<NamiEntitlement>> get() = _activeEntitlementsStateFlow
 

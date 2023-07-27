@@ -47,11 +47,11 @@ import java.util.*
 const val LOG_TAG = "TestNami"
 
 fun <VM : ViewModel> viewModelProviderFactoryOf(
-    create: () -> VM
+    create: () -> VM,
 ): ViewModelProvider.Factory = SimpleFactory(create)
 
 private class SimpleFactory<VM : ViewModel>(
-    private val create: () -> VM
+    private val create: () -> VM,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val vm = create()
@@ -90,7 +90,7 @@ class MainActivity : ComponentActivity() {
                 logLevel = NamiLogLevel.DEBUG.takeIf { BuildConfig.DEBUG } ?: NamiLogLevel.WARN
                 initialConfig = initialConfigStringFromFile
 //                namiLanguageCode = NamiLanguageCode.DE
-            }
+            },
         )
 
         val profileViewModel = ProfileViewModel()
@@ -129,7 +129,7 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    color = MaterialTheme.colors.background,
                 ) {
                     TestApp(isTelevision, campaigns, profileViewModel)
                 }
@@ -155,15 +155,16 @@ class MainActivity : ComponentActivity() {
                     QueryProductDetailsParams.Product.newBuilder()
                         .setProductId(sku.skuId)
                         .setProductType(BillingClient.ProductType.SUBS)
-                        .build()
+                        .build(),
                 )
 
             val params = QueryProductDetailsParams.newBuilder().setProductList(productList)
 
             purchasesUpdatedListener.billingClient?.queryProductDetailsAsync(
-                params.build()
+                params.build(),
             ) { billingResult,
-                productDetailsList ->
+                productDetailsList,
+                ->
                 // Process the result
                 Log.d(LOG_TAG, "billingResult $billingResult $productDetailsList")
 
@@ -177,12 +178,12 @@ class MainActivity : ComponentActivity() {
                         if (offer != null) {
                             Log.d(
                                 LOG_TAG,
-                                "We have an offer ${offer.offerId} on ${offer.basePlanId}"
+                                "We have an offer ${offer.offerId} on ${offer.basePlanId}",
                             )
                         } else {
                             Log.d(
                                 LOG_TAG,
-                                "We do not an offer for ${sku.skuId}}"
+                                "We do not an offer for ${sku.skuId}}",
                             )
                         }
                         var productDetailsParamsList = if (offer != null) {
@@ -190,13 +191,13 @@ class MainActivity : ComponentActivity() {
                                 BillingFlowParams.ProductDetailsParams.newBuilder()
                                     .setProductDetails(it)
                                     .setOfferToken(offer.offerToken)
-                                    .build()
+                                    .build(),
                             )
                         } else {
                             listOf(
                                 BillingFlowParams.ProductDetailsParams.newBuilder()
                                     .setProductDetails(it)
-                                    .build()
+                                    .build(),
                             )
                         }
 
@@ -208,7 +209,7 @@ class MainActivity : ComponentActivity() {
                         val billingResult =
                             purchasesUpdatedListener.billingClient?.launchBillingFlow(
                                 paywall,
-                                billingFlowParams
+                                billingFlowParams,
                             )
                         Log.d(LOG_TAG, "final billingResult $billingResult")
                     }
@@ -254,7 +255,7 @@ fun TestApp(leanback: Boolean, campaigns: List<NamiCampaign>, profileViewModel: 
                 title = {
                     Text(
                         textAlign = TextAlign.Center,
-                        text = "Test Nami"
+                        text = "Test Nami",
                     )
                 },
                 backgroundColor = MaterialTheme.colors.primary,
@@ -264,7 +265,7 @@ fun TestApp(leanback: Boolean, campaigns: List<NamiCampaign>, profileViewModel: 
                 modifier = Modifier.padding(start = 14.dp, top = 8.dp).takeIf {
                     leanback
                 } ?: Modifier.padding(
-                    0.dp
+                    0.dp,
                 ),
                 actions = {
                     Button(onClick = {
@@ -277,10 +278,10 @@ fun TestApp(leanback: Boolean, campaigns: List<NamiCampaign>, profileViewModel: 
                     }) {
                         Text(
                             "Turn off Anonymous Mode".takeIf { inAnonymousMode == true } ?: "Turn on Anonymous Mode",
-                            color = MaterialTheme.colors.background
+                            color = MaterialTheme.colors.background,
                         )
                     }
-                }
+                },
             )
         },
         bottomBar = { BottomNavigationBar(navController, leanback) },
@@ -290,12 +291,12 @@ fun TestApp(leanback: Boolean, campaigns: List<NamiCampaign>, profileViewModel: 
                     navController = navController,
                     leanback = leanback,
                     campaigns = campaigns,
-                    profileViewModel = profileViewModel
+                    profileViewModel = profileViewModel,
 
                 )
             }
         },
-        backgroundColor = MaterialTheme.colors.background // Set background color to avoid the white flashing when you switch between screens
+        backgroundColor = MaterialTheme.colors.background, // Set background color to avoid the white flashing when you switch between screens
     )
 }
 
@@ -304,7 +305,7 @@ fun Navigation(
     navController: NavHostController,
     leanback: Boolean,
     campaigns: List<NamiCampaign>,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
 ) {
     NavHost(navController, startDestination = NavigationItem.Campaigns.route) {
         composable(NavigationItem.Campaigns.route) {

@@ -31,19 +31,19 @@ import com.namiml.campaign.NamiCampaignType
 
 data class CampaignHeader(
     var group: Number,
-    var name: String
+    var name: String,
 )
 
 data class CampaignItem(
     val group: Number,
     val name: String,
     val type: String,
-    val label: String?
+    val label: String?,
 )
 
 val headers = listOf(
     CampaignHeader(1, "Live Unlabeled Campaign"),
-    CampaignHeader(2, "Live Labeled Campaign")
+    CampaignHeader(2, "Live Labeled Campaign"),
 )
 
 fun getHeader(headerGroup: Number): CampaignHeader {
@@ -60,7 +60,7 @@ fun CampaignTitleText(text: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 20.dp),
-        color = Color.Black
+        color = Color.Black,
     )
 }
 
@@ -73,7 +73,7 @@ fun CampaignSubtitleText(text: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 20.dp),
-        color = Color.Black
+        color = Color.Black,
     )
 }
 
@@ -89,7 +89,7 @@ fun CampaignCard(title: String, subtitle: String) {
             Row {
                 Column(
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     CampaignTitleText(text = title)
                     CampaignSubtitleText(text = subtitle)
@@ -106,7 +106,7 @@ fun Header(name: String) {
         fontSize = 10.sp,
         textAlign = TextAlign.Left,
         modifier = Modifier.padding(14.dp),
-        color = DarkGrey
+        color = DarkGrey,
     )
 }
 
@@ -124,7 +124,7 @@ fun CampaignRow(campaign: CampaignItem) {
                 NamiCampaignManager.launch(activity, paywallActionCallback = { paywallEvent ->
                     Log.d(
                         LOG_TAG,
-                        "${paywallEvent.action}"
+                        "${paywallEvent.action}",
                     )
 
                     Log.d(
@@ -143,7 +143,7 @@ fun CampaignRow(campaign: CampaignItem) {
                             "\tselectedItemName ${paywallEvent.componentChange?.name}\n" +
                             "\tsku ${paywallEvent.sku?.skuId}\n" +
                             "\tpurchaseError ${paywallEvent.purchaseError}\n" +
-                            "\tpurchaseError ${paywallEvent.purchases}\n"
+                            "\tpurchaseError ${paywallEvent.purchases}\n",
 
                     )
                 }) { result ->
@@ -156,7 +156,7 @@ fun CampaignRow(campaign: CampaignItem) {
                             Toast.makeText(
                                 activity,
                                 "Campaign Default Launch Error -> ${result.error}",
-                                Toast.LENGTH_LONG
+                                Toast.LENGTH_LONG,
                             ).show()
                         }
                     }
@@ -171,7 +171,7 @@ fun CampaignRow(campaign: CampaignItem) {
 
                     Log.d(
                         LOG_TAG,
-                        "${paywallEvent.action}"
+                        "${paywallEvent.action}",
                     )
 
                     Log.d(
@@ -190,7 +190,7 @@ fun CampaignRow(campaign: CampaignItem) {
                             "\tselectedItemName ${paywallEvent.componentChange?.name}\n" +
                             "\tsku ${paywallEvent.sku?.skuId}\n" +
                             "\tpurchaseError ${paywallEvent.purchaseError}\n" +
-                            "\tpurchaseError ${paywallEvent.purchases}\n"
+                            "\tpurchaseError ${paywallEvent.purchases}\n",
 
                     )
                 }) { result ->
@@ -203,7 +203,7 @@ fun CampaignRow(campaign: CampaignItem) {
                             Toast.makeText(
                                 activity,
                                 "Campaign (label: $label) Launch Error -> ${result.error}",
-                                Toast.LENGTH_LONG
+                                Toast.LENGTH_LONG,
                             ).show()
                         }
                     }
@@ -211,8 +211,8 @@ fun CampaignRow(campaign: CampaignItem) {
             }
         },
         colors = ButtonDefaults.textButtonColors(
-            backgroundColor = color
-        )
+            backgroundColor = color,
+        ),
     ) {
         Text(
             text = campaign.name,
@@ -221,7 +221,7 @@ fun CampaignRow(campaign: CampaignItem) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(14.dp),
-            color = Color.Black
+            color = Color.Black,
         )
     }
 }
@@ -241,14 +241,14 @@ fun CampaignsList(campaignItems: List<CampaignItem>) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CampaignsListTV(
-    campaignItems: List<CampaignItem>
+    campaignItems: List<CampaignItem>,
 ) {
     CampaignCard(title = "Launch a Campaign", subtitle = "Choose a campaign to show a paywall")
 
     LazyVerticalGrid(
         modifier = Modifier.padding(top = 60.dp),
         columns = GridCells.Adaptive(200.dp),
-        contentPadding = PaddingValues(8.dp)
+        contentPadding = PaddingValues(8.dp),
     ) {
         items(campaignItems) { campaign ->
             CampaignRow(campaign)
@@ -259,7 +259,7 @@ fun CampaignsListTV(
 @Composable
 fun CampaignView(
     leanback: Boolean,
-    campaigns: List<NamiCampaign>
+    campaigns: List<NamiCampaign>,
 ) {
     val campaignItems = campaigns.sortedBy { it.value }
         .filter { it.type == NamiCampaignType.LABEL }
@@ -276,7 +276,7 @@ fun CampaignView(
                     NamiCampaignType.LABEL -> "label"
                     NamiCampaignType.URL -> "url"
                 },
-                it.value
+                it.value,
             )
         }
 
@@ -294,12 +294,12 @@ fun CampaignView(
                     },
                     elevation = FloatingActionButtonDefaults.elevation(8.dp),
                     backgroundColor = MaterialTheme.colors.primary,
-                    contentColor = MaterialTheme.colors.background
+                    contentColor = MaterialTheme.colors.background,
                 )
             },
             content = {
                 CampaignsList(campaignItems)
-            }
+            },
         )
     }
 }
