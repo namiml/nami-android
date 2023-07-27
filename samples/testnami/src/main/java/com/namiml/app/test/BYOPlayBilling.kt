@@ -61,7 +61,7 @@ internal object GooglePlayBillingHelper {
     }
 }
 internal class GooglePlayBillingClientListener(
-    val callback: (Boolean) -> Unit,
+    val callback: (Boolean) -> Unit
 ) : BillingClientStateListener {
 
     private var attemptCount: Double = 1.0
@@ -76,13 +76,13 @@ internal class GooglePlayBillingClientListener(
         } else {
             Log.d(
                 LOG_TAG,
-                "Could not connect to Google Play Billing - Error Code: ${result.responseCode}",
+                "Could not connect to Google Play Billing - Error Code: ${result.responseCode}"
             )
 
             if (attemptCount <= 7.0) {
                 Log.d(
                     LOG_TAG,
-                    "Making attempt #${attemptCount.toInt()} to connect to Google Play Billing",
+                    "Making attempt #${attemptCount.toInt()} to connect to Google Play Billing"
                 )
 
                 handler.postDelayed(
@@ -90,7 +90,7 @@ internal class GooglePlayBillingClientListener(
                         attemptCount++
                         callback.invoke(false)
                     },
-                    ((BASE_DELAY.pow(attemptCount)) * 1000).toLong(),
+                    ((BASE_DELAY.pow(attemptCount)) * 1000).toLong()
                 )
             }
         }
@@ -122,7 +122,7 @@ internal class GooglePlayPurchaseListener : PurchasesUpdatedListener {
         if (Nami.purchaseManagementEnabled() == true) {
             Log.d(
                 LOG_TAG,
-                "Nami SDK has purchase management is enabled, so not handling this purchase here.",
+                "Nami SDK has purchase management is enabled, so not handling this purchase here."
             )
             return
         }
@@ -145,7 +145,7 @@ internal class GooglePlayPurchaseListener : PurchasesUpdatedListener {
                                 description = null,
                                 orderId = purchase.orderId,
                                 purchaseSource = NamiPurchaseSource.CAMPAIGN,
-                                purchaseToken = purchase.purchaseToken,
+                                purchaseToken = purchase.purchaseToken
                             )
                             NamiPaywallManager.buySkuComplete(paywall!!, purchaseSuccess)
                         }
@@ -159,7 +159,7 @@ internal class GooglePlayPurchaseListener : PurchasesUpdatedListener {
         if (Nami.purchaseManagementEnabled() == true) {
             Log.d(
                 LOG_TAG,
-                "Nami SDK has purchase management is enabled, so ignoring onPurchasesUpdated.",
+                "Nami SDK has purchase management is enabled, so ignoring onPurchasesUpdated."
             )
             return
         }
@@ -170,7 +170,7 @@ internal class GooglePlayPurchaseListener : PurchasesUpdatedListener {
             Log.d(
                 LOG_TAG,
                 "PostPurchaseListener - onPurchasesUpdated's " +
-                    "debugMessage = ${result.debugMessage}",
+                    "debugMessage = ${result.debugMessage}"
             )
         }
 

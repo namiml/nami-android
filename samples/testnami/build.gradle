@@ -11,7 +11,7 @@ android {
         versionCode version_code
         versionName nami_sdk_version
         buildConfigField "String", "APP_PLATFORM_ID", "\"e3d7236f-408a-45eb-905b-1cbf11dfedae\""
-        buildConfigField "String", "APP_PLATFORM_ID_AMAZON", "\"76a40e56-f4df-4bcd-a1d0-615408caaec1\""
+        buildConfigField "String", "APP_PLATFORM_ID_AMAZON", "\"YOUR_APP_PLATFORM_ID_AMAZON\""
         buildConfigField "boolean", "NAMI_ENV_PROD", "true"
     }
 
@@ -66,8 +66,8 @@ dependencies {
     implementation "androidx.activity:activity-compose:1.5.0"
     implementation "io.coil-kt:coil-compose:$coil_version"
     implementation "com.github.jeziellago:compose-markdown:0.3.0"
-    implementation "com.android.billingclient:billing:5.0.0"
-    implementation "com.android.billingclient:billing-ktx:5.0.0"
+    implementation "com.android.billingclient:billing:5.1.0"
+    implementation "com.android.billingclient:billing-ktx:5.1.0"
 }
 
 repositories {

@@ -9,14 +9,14 @@ private val ProductionColorPalette = darkColors(
     primary = Yellow,
     background = Color.White,
     onBackground = Smoke,
-    surface = Navy,
+    surface = Navy
 )
 
 private val StagingColorPalette = darkColors(
     primary = PrimaryBlue,
     background = Color.White,
     onBackground = Smoke,
-    surface = Navy,
+    surface = Navy
 )
 
 @Composable
@@ -31,6 +31,6 @@ fun TestNamiTheme(production: Boolean = false, content: @Composable () -> Unit) 
         colors = colors,
         typography = Typography,
         shapes = Shapes,
-        content = content,
+        content = content
     )
 }

@@ -16,12 +16,12 @@ fun BottomNavigationBar(navController: NavController, isTelevision: Boolean) {
     val items = listOf(
         NavigationItem.Campaigns,
         NavigationItem.Profile,
-        NavigationItem.Entitlements,
+        NavigationItem.Entitlements
     )
     BottomNavigation(
         modifier = Modifier.padding(bottom = 20.dp).takeIf { isTelevision } ?: Modifier.padding(),
         backgroundColor = MaterialTheme.colors.primary,
-        contentColor = Color.Black,
+        contentColor = Color.Black
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
@@ -35,7 +35,7 @@ fun BottomNavigationBar(navController: NavController, isTelevision: Boolean) {
                 unselectedContentColor = Color.Black.copy(0.4f).takeIf {
                     BuildConfig.NAMI_ENV_PROD == true
                 } ?: Color.White.copy(
-                    0.4f,
+                    0.4f
                 ),
                 alwaysShowLabel = true,
                 selected = currentRoute == item.route,
@@ -55,7 +55,7 @@ fun BottomNavigationBar(navController: NavController, isTelevision: Boolean) {
                         // Restore state when reselecting a previously selected item
                         restoreState = true
                     }
-                },
+                }
             )
         }
     }
