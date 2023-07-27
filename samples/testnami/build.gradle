@@ -10,7 +10,7 @@ android {
         targetSdkVersion target_sdk
         versionCode version_code
         versionName nami_sdk_version
-        buildConfigField "String", "APP_PLATFORM_ID", "\"e3d7236f-408a-45eb-905b-1cbf11dfedae\""
+        buildConfigField "String", "APP_PLATFORM_ID", "\"YOUR_APP_PLATFORM_ID_GOOGLE\""
         buildConfigField "String", "APP_PLATFORM_ID_AMAZON", "\"YOUR_APP_PLATFORM_ID_AMAZON\""
         buildConfigField "boolean", "NAMI_ENV_PROD", "true"
     }
