@@ -28,6 +28,7 @@ import com.namiml.campaign.LaunchCampaignResult
 import com.namiml.campaign.NamiCampaign
 import com.namiml.campaign.NamiCampaignManager
 import com.namiml.campaign.NamiCampaignType
+import android.annotation.SuppressLint
 
 data class CampaignHeader(
     var group: Number,
@@ -113,7 +114,7 @@ fun Header(name: String) {
 @Composable
 fun CampaignRow(campaign: CampaignItem) {
     val activity = LocalContext.current as Activity
-    var color by remember { mutableStateOf(Color.Black) }
+    var color by remember { mutableStateOf(Color.White) }
 
     TextButton(
         modifier = Modifier
@@ -256,6 +257,7 @@ fun CampaignsListTV(
     }
 }
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun CampaignView(
     leanback: Boolean,
