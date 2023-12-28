@@ -15,10 +15,8 @@ import com.android.billingclient.api.PurchasesUpdatedListener
 import com.namiml.Nami
 import com.namiml.app.test.LOG_TAG
 import com.namiml.paywall.NamiPaywallManager
-import com.namiml.paywall.NamiPurchaseSource
 import com.namiml.paywall.NamiSKU
 import com.namiml.paywall.model.NamiPurchaseSuccess
-import java.util.Date
 import kotlin.math.pow
 
 /**
@@ -137,14 +135,9 @@ internal class GooglePlayPurchaseListener : PurchasesUpdatedListener {
 
                         if (sku != null && paywall != null) {
                             val namiSku = sku
-                            val purchaseDate = Date(purchase.purchaseTime)
                             val purchaseSuccess = NamiPurchaseSuccess.GooglePlay(
                                 product = namiSku!!,
-                                purchaseDate = purchaseDate,
-                                expiresDate = null,
-                                description = null,
                                 orderId = purchase.orderId,
-                                purchaseSource = NamiPurchaseSource.CAMPAIGN,
                                 purchaseToken = purchase.purchaseToken,
                             )
                             NamiPaywallManager.buySkuComplete(paywall!!, purchaseSuccess)
@@ -180,8 +173,10 @@ internal class GooglePlayPurchaseListener : PurchasesUpdatedListener {
             }
         } else if (result.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
             // Handle an error caused by a user cancelling the purchase flow.
+            NamiPaywallManager.buySkuCancel()
         } else {
             // Handle any other error codes.
+            NamiPaywallManager.buySkuCancel()
             Log.d(LOG_TAG, "GooglePlayPurchaseListener - ${result.responseCode}")
         }
     }

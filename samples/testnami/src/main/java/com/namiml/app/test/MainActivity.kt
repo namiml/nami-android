@@ -90,6 +90,9 @@ class MainActivity : ComponentActivity() {
                 logLevel = NamiLogLevel.DEBUG.takeIf { BuildConfig.DEBUG } ?: NamiLogLevel.WARN
                 initialConfig = initialConfigStringFromFile
 //                namiLanguageCode = NamiLanguageCode.DE
+                settingsList = listOf(
+                    "useStagingAPI",
+                )
             },
         )
 
@@ -170,27 +173,23 @@ class MainActivity : ComponentActivity() {
 
                 productDetailsList?.firstOrNull().let {
                     if (it?.productType == BillingClient.ProductType.SUBS) {
-                        var offer = it?.subscriptionOfferDetails?.firstOrNull { offer -> sku.promoId != null && offer?.offerId == sku.promoId }
+                        var offerToken = it?.subscriptionOfferDetails?.firstOrNull { offer -> sku.promoId != null && offer?.offerId == sku.promoId }?.offerToken
 
-                        if (offer == null) {
-                            offer = it?.subscriptionOfferDetails?.firstOrNull { offer -> offer.offerId != null }
-                        }
-                        if (offer != null) {
+                        if (offerToken != null) {
                             Log.d(
                                 LOG_TAG,
-                                "We have an offer ${offer.offerId} on ${offer.basePlanId}",
+                                "We have an offer $offerToken on for ${sku.promoId}",
                             )
                         } else {
-                            Log.d(
-                                LOG_TAG,
-                                "We do not an offer for ${sku.skuId}}",
-                            )
+                            if (offerToken == null) {
+                                offerToken = it.subscriptionOfferDetails?.firstOrNull()?.offerToken
+                            }
                         }
-                        var productDetailsParamsList = if (offer != null) {
+                        var productDetailsParamsList = if (offerToken != null) {
                             listOf(
                                 BillingFlowParams.ProductDetailsParams.newBuilder()
                                     .setProductDetails(it)
-                                    .setOfferToken(offer.offerToken)
+                                    .setOfferToken(offerToken)
                                     .build(),
                             )
                         } else {
@@ -200,6 +199,11 @@ class MainActivity : ComponentActivity() {
                                     .build(),
                             )
                         }
+
+                        Log.d(
+                            LOG_TAG,
+                            "productDetailsParamsList $productDetailsParamsList}",
+                        )
 
                         val billingFlowParams =
                             BillingFlowParams.newBuilder()
