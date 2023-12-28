@@ -90,9 +90,6 @@ class MainActivity : ComponentActivity() {
                 logLevel = NamiLogLevel.DEBUG.takeIf { BuildConfig.DEBUG } ?: NamiLogLevel.WARN
                 initialConfig = initialConfigStringFromFile
 //                namiLanguageCode = NamiLanguageCode.DE
-                settingsList = listOf(
-                    "useStagingAPI",
-                )
             },
         )
 
