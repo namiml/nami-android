@@ -1,5 +1,6 @@
 package com.namiml.app.test
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
@@ -28,7 +29,6 @@ import com.namiml.campaign.LaunchCampaignResult
 import com.namiml.campaign.NamiCampaign
 import com.namiml.campaign.NamiCampaignManager
 import com.namiml.campaign.NamiCampaignType
-import android.annotation.SuppressLint
 
 data class CampaignHeader(
     var group: Number,
