@@ -1,5 +1,7 @@
 package com.namiml.app.test
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -42,6 +44,8 @@ import com.namiml.customer.NamiCustomerManager
 import com.namiml.demo.basicpaywallmgmt.GooglePlayBillingHelper
 import com.namiml.demo.basicpaywallmgmt.GooglePlayPurchaseListener
 import com.namiml.paywall.NamiPaywallManager
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 const val LOG_TAG = "TestNami"
@@ -224,18 +228,35 @@ class MainActivity : ComponentActivity() {
             campaigns = it
         }
 
-//        NamiPaywallManager.registerDeepLinkHandler { paywall, url ->
-//            NamiPaywallManager.dismiss(paywall)
-//
-//            try {
-//                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-//            } catch (e: ActivityNotFoundException) {
-//                Log.d(LOG_TAG, "Unable to open deeplink uri $url")
-//            }
-//        }
+        NamiPaywallManager.registerDeepLinkHandler { paywall, url ->
+            NamiPaywallManager.dismiss(paywall, completionHandler = {
+                try {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                } catch (e: ActivityNotFoundException) {
+                    Log.d(LOG_TAG, "Unable to open deeplink uri $url")
+                }
+            })
+
+        }
 
         NamiPaywallManager.registerRestoreHandler { paywall ->
             Log.d(LOG_TAG, "Restore on paywall called.")
+            GlobalScope.launch {
+                NamiPaywallManager.dismiss(paywall)
+            }
+        }
+
+        NamiPaywallManager.registerCloseHandler { paywall ->
+            Log.d(LOG_TAG, "Close handler on paywall called.")
+            NamiPaywallManager.dismiss(paywall)
+        }
+
+        NamiPaywallManager.registerSignInHandler { paywall ->
+            Log.d(LOG_TAG, "Sign in on paywall called.")
+            NamiPaywallManager.dismiss(paywall, completionHandler = {
+
+            })
+
         }
 
         NamiCustomerManager.setCustomerDataPlatformId("12345")
