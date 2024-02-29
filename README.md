@@ -36,7 +36,7 @@ allprojects {
 ### Add Nami SDK dependency
 
 dependencies {
-  implementation "com.namiml:sdk-android:3.1.31"
+  implementation "com.namiml:sdk-android:3.1.32"
 }
 
 ### Add Java 8 compatibility
