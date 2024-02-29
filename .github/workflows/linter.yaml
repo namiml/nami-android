@@ -10,5 +10,6 @@ jobs:
         uses: ScaCap/action-ktlint@master
         with:
           github_token: ${{ secrets.github_token }}
+          ktlint_version: 1.1.1
           reporter: github-pr-review
           level: warning
