@@ -137,8 +137,8 @@ internal class GooglePlayPurchaseListener : PurchasesUpdatedListener {
                             val namiSku = sku
                             val purchaseSuccess = NamiPurchaseSuccess.GooglePlay(
                                 product = namiSku!!,
-                                orderId = purchase.orderId,
-                                purchaseToken = purchase.purchaseToken,
+                                orderId = purchase.orderId!!,
+                                purchaseToken = purchase.purchaseToken
                             )
                             NamiPaywallManager.buySkuComplete(paywall!!, purchaseSuccess)
                         }

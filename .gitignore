@@ -17,3 +17,5 @@ jniLibs
 build
 local.properties
 reports
+
+patches
