@@ -17,17 +17,6 @@ android {
         buildConfigField "boolean", "NAMI_ENV_PROD", "false"
     }
 
-    signingConfigs {
-        debug {
-        }
-        release {
-            storeFile file('release.keystore')
-            storePassword 'android'
-            keyAlias 'androidreleasekey'
-            keyPassword 'android'
-        }
-    }
-
     compileOptions {
 	    coreLibraryDesugaringEnabled true
         sourceCompatibility = JavaVersion.VERSION_11
