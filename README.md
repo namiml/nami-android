@@ -19,7 +19,7 @@ Get started by heading over to our [quick start guide](https://docs.namiml.com/d
 ### Requirements
 - Android SDK minimum version 22
 - SDK builds target Android 13 (API version 33)
-- SDK has been built with Java v8 and Kotlin v1.6.10
+- SDK has been built with Kotlin v1.8.20
 
 ### Add Maven repostiory
 
@@ -36,28 +36,8 @@ allprojects {
 ### Add Nami SDK dependency
 
 dependencies {
-  implementation "com.namiml:sdk-android:3.2.0"
+  implementation "com.namiml:sdk-android:3.2.2"
 }
-
-### Add Java 8 compatibility
-
-```java
-android {
-  ...
-  // Configure only for each module that uses Java 8
-  // language features (either in its source code or
-  // through dependencies).
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
-  }
-  // For Kotlin projects
-  kotlinOptions {
-    jvmTarget = JavaVersion.VERSION_1_8.toString()
-  }
-}
-```
-
 
 ## Configure the SDK
 

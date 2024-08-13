@@ -1,13 +1,14 @@
 buildscript {
-    ext.kotlin_version = '1.6.10'
-    ext.nami_sdk_version = '3.2.0'
+    ext.kotlin_version = '1.8.20'
+    ext.nami_sdk_version = '3.2.2'
     ext.min_sdk = 25
     ext.target_sdk = 33
-    ext.compile_sdk = 33
+    ext.compile_sdk = 34
     ext.version_code = 1
-    ext.desugar_jdk_libs_version = '1.1.5'
-    ext.compose_version= "1.1.1"
-    ext.coil_version = "2.1.0"
+    ext.desugar_jdk_libs_version = '2.0.4'
+    ext.compose_version= "1.4.3"
+    ext.coil_version = "2.2.2"
+    ext.gradle_version = "8.3.0"
 
     repositories {
         google()
@@ -16,7 +17,7 @@ buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath "com.android.tools.build:gradle:$gradle_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
