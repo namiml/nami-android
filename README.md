@@ -68,7 +68,7 @@ class DemoApplication : Application() {
 
 ## Next Steps
 
-Once the SDK is initialized, you're ready to show a paywall. See the [complete guide to Android setup](https://docs.namiml.com/docs/google-play-android-setup#show-a-paywall) to find out how.
+Once the SDK is initialized, you're ready to show a paywall. See the [complete guide to Android setup](https://learn.namiml.com/public-docs/integrations/billing-platforms/google-integration/sdk-setup) to find out how.
 
 
 ## Other Resources
