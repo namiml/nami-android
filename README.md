@@ -37,7 +37,7 @@ allprojects {
 ### Add Nami SDK dependency
 
 dependencies {
-  implementation "com.namiml:sdk-android:3.2.2"
+  implementation "com.namiml:sdk-android:3.2.6"
 }
 
 ## Configure the SDK
@@ -79,4 +79,4 @@ Once the SDK is initialized, you're ready to show a paywall. See the [complete g
 
 ### Documentation
 
-- [SDK Reference](https://docs.namiml.com/reference/)
+- [SDK Reference](https://learn.namiml.com/public-docs/sdk-reference)
