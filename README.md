@@ -37,7 +37,7 @@ allprojects {
 ### Add Nami SDK dependency
 
 dependencies {
-  implementation "com.namiml:sdk-android:3.2.6"
+  implementation "com.namiml:sdk-android:3.2.10"
 }
 
 ## Configure the SDK
