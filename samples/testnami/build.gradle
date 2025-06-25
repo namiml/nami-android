@@ -12,7 +12,7 @@ android {
         versionCode version_code
         versionName nami_sdk_version
         multiDexEnabled true
-        buildConfigField "String", "APP_PLATFORM_ID", "\"YOUR_APP_PLATFORM_ID_GOOGLE\""
+        buildConfigField "String", "APP_PLATFORM_ID", "\"76a40e56-f4df-4bcd-a1d0-615408caaec1\""
         buildConfigField "String", "APP_PLATFORM_ID_AMAZON", "\"YOUR_APP_PLATFORM_ID_AMAZON\""
         buildConfigField "boolean", "NAMI_ENV_PROD", "false"
     }
@@ -35,10 +35,15 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.6"
+        kotlinCompilerExtensionVersion = "1.5.5"
     }
 
     buildTypes {
+        debug {
+            debuggable false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
